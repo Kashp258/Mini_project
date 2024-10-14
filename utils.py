@@ -55,4 +55,4 @@ def gen_labels():
     Generate labels for the classes.
     Modify this list according to your specific classes.
     """
-    return ["Cardboard", "Glass", "Metal", "Paper", "Plastic", "Trash"]  # Only 6 categories now
+    return ["Cardboard", "Metal", "Glass", "Plastic", "Paper", "Compost"]  # Only 6 categories now
