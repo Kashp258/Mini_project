@@ -38,17 +38,89 @@ def load_model():
 # Load the model when the app starts
 model = load_model()
 
-# Function to provide suggestions based on classified waste
-def get_suggestions(class_name):
+# Function to provide detailed, step-wise suggestions with images
+def get_detailed_suggestions(class_name):
     suggestions = {
-        "Cardboard": "Recycle at a cardboard recycling facility or reuse for storage.",
-        "Compost": "Compost at home or send to a composting facility.",
-        "Glass": "Recycle at a glass recycling center; avoid breaking the glass.",
-        "Metal": "Recycle at a metal recycling facility. Make sure it's clean.",
-        "Paper": "Recycle or reuse for crafts. Avoid recycling wet or greasy paper.",
-        "Plastic": "Recycle based on the type of plastic. Clean thoroughly before recycling."
+        "Cardboard": {
+            "steps": [
+                "Step 1: Flatten the cardboard boxes.",
+                "Step 2: Remove any plastic tape or labels.",
+                "Step 3: Take the flattened cardboard to a recycling facility or drop it in the appropriate recycling bin."
+            ],
+            "image_urls": [
+                "https://example.com/flatten-cardboard.jpg",
+                "https://example.com/remove-tape.jpg",
+                "https://example.com/recycling-bin.jpg"
+            ]
+        },
+        "Compost": {
+            "steps": [
+                "Step 1: Collect compostable waste like food scraps and yard waste.",
+                "Step 2: Chop waste into smaller pieces for faster decomposition.",
+                "Step 3: Layer green (nitrogen-rich) and brown (carbon-rich) materials.",
+                "Step 4: Turn the pile regularly to aerate it and speed up composting."
+            ],
+            "image_urls": [
+                "https://example.com/collect-waste.jpg",
+                "https://example.com/chop-waste.jpg",
+                "https://example.com/layer-materials.jpg",
+                "https://example.com/turn-pile.jpg"
+            ]
+        },
+        # Add similar entries for "Glass", "Metal", "Paper", "Plastic"
+        # Include images to explain each step clearly
+    "Glass": {
+            "steps": [
+                "Step 1: Rinse the glass items to remove any leftover contents.",
+                "Step 2: Separate glass by color (clear, green, brown) if required by your local recycling facility.",
+                "Step 3: Take the clean, sorted glass to a recycling drop-off point or place it in the recycling bin."
+            ],
+            "image_urls": [
+                "https://example.com/rinse-glass.jpg",
+                "https://example.com/sort-glass.jpg",
+                "https://example.com/recycle-glass.jpg"
+            ]
+        },
+        "Metal": {
+            "steps": [
+                "Step 1: Rinse metal cans or containers to remove food or liquid residue.",
+                "Step 2: Crush cans to save space in your recycling bin.",
+                "Step 3: Take the metal items to a recycling facility or leave them in the appropriate curbside bin."
+            ],
+            "image_urls": [
+                "https://example.com/rinse-metal.jpg",
+                "https://example.com/crush-cans.jpg",
+                "https://example.com/recycle-metal.jpg"
+            ]
+        },
+        "Paper": {
+            "steps": [
+                "Step 1: Sort paper into categories: newspaper, office paper, cardboard, etc.",
+                "Step 2: Remove any staples, tape, or plastic coverings.",
+                "Step 3: Place sorted paper in the recycling bin or drop it at a recycling center."
+            ],
+            "image_urls": [
+                "https://example.com/sort-paper.jpg",
+                "https://example.com/remove-staples.jpg",
+                "https://example.com/recycle-paper.jpg"
+            ]
+        },
+        "Plastic": {
+            "steps": [
+                "Step 1: Check the recycling number on the plastic item to ensure it is recyclable in your area.",
+                "Step 2: Rinse and clean the plastic containers to remove any food or drink residue.",
+                "Step 3: Crush plastic bottles and containers to save space.",
+                "Step 4: Take clean, sorted plastic to a recycling facility or place it in the correct recycling bin."
+            ],
+            "image_urls": [
+                "https://example.com/check-recycle-number.jpg",
+                "https://example.com/rinse-plastic.jpg",
+                "https://example.com/crush-plastic.jpg",
+                "https://example.com/recycle-plastic.jpg"
+            ]
+        }
     }
-    return suggestions.get(class_name, "No specific suggestions available.")
+    return suggestions.get(class_name, {"steps": ["No specific suggestions available."], "image_urls": []})
 
 # Define background and UI
 background_image_url = "https://png.pngtree.com/thumb_back/fh260/background/20220217/pngtree-green-simple-atmospheric-waste-classification-illustration-background-image_953325.jpg"
@@ -94,6 +166,10 @@ if image_file is not None:
     # Display the prediction
     st.write(f"Predicted Class: {predicted_label}")
 
-    # Display suggestions based on the predicted class
-    suggestions = get_suggestions(predicted_label)
-    st.write(f"Suggestions: {suggestions}")
+    # Display detailed suggestions with images
+    suggestions = get_detailed_suggestions(predicted_label)
+    st.write("Step-by-Step Suggestions:")
+    for step, img_url in zip(suggestions["steps"], suggestions["image_urls"]):
+        st.write(step)
+        if img_url:
+            st.image(img_url, use_column_width=True)
