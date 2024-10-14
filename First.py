@@ -38,6 +38,18 @@ def load_model():
 # Load the model when the app starts
 model = load_model()
 
+# Function to provide suggestions based on classified waste
+def get_suggestions(class_name):
+    suggestions = {
+        "Cardboard": "Recycle at a cardboard recycling facility or reuse for storage.",
+        "Compost": "Compost at home or send to a composting facility.",
+        "Glass": "Recycle at a glass recycling center; avoid breaking the glass.",
+        "Metal": "Recycle at a metal recycling facility. Make sure it's clean.",
+        "Paper": "Recycle or reuse for crafts. Avoid recycling wet or greasy paper.",
+        "Plastic": "Recycle based on the type of plastic. Clean thoroughly before recycling."
+    }
+    return suggestions.get(class_name, "No specific suggestions available.")
+
 # Define background and UI
 background_image_url = "https://png.pngtree.com/thumb_back/fh260/background/20220217/pngtree-green-simple-atmospheric-waste-classification-illustration-background-image_953325.jpg"
 
@@ -81,3 +93,7 @@ if image_file is not None:
 
     # Display the prediction
     st.write(f"Predicted Class: {predicted_label}")
+
+    # Display suggestions based on the predicted class
+    suggestions = get_suggestions(predicted_label)
+    st.write(f"Suggestions: {suggestions}")
