@@ -46,8 +46,8 @@ def model_arc():
     model.add(Dense(256, activation='relu'))
     model.add(BatchNormalization())
     model.add(Dropout(0.5))
-    model.add(Dense(7, activation='softmax'))  # 7 classes for classification
-    
+    model.add(Dense(6, activation='softmax'))  # 6 classes for classification (updated)
+
     return model
 
 def gen_labels():
@@ -55,4 +55,4 @@ def gen_labels():
     Generate labels for the classes.
     Modify this list according to your specific classes.
     """
-    return ["Cardboard", "Glass", "Metal", "Paper", "Plastic", "Trash", "Compost"]
+    return ["Cardboard", "Glass", "Metal", "Paper", "Plastic", "Trash"]  # Only 6 categories now
