@@ -9,7 +9,7 @@ import gdown
 def download_model_from_drive():
     file_id = '1ruV_1zQcxd4E2-5c0dhIK3vQhlWNMQRb'  # Your Google Drive file ID
     url = f'https://drive.google.com/uc?id={file_id}'
-    output = './Downloads/modeltrash.weights.h5'  # Path to save the downloaded file
+    output = './weights/weights/modeltrash.weights.h5'  # Path to save the downloaded file
 
     # Check if the model weights are already downloaded, if not, download them
     if not os.path.exists(output):
@@ -20,7 +20,7 @@ def download_model_from_drive():
         st.write("Model weights already downloaded.")
 
 # Path to the downloaded model weights
-model_weights_path = './Downloads/modeltrash.weights.h5'
+model_weights_path = './weights/weights/modeltrash.weights.h5'
 
 # Cache the model loading to avoid reloading on every interaction
 @st.cache_resource
