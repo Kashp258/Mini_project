@@ -36,7 +36,7 @@ def load_model():
     return model
 
 def show_classification_page():
-    # Custom CSS for background image and styling
+    # Custom CSS for background image
     st.markdown(f"""
     <style>
         .stApp {{
@@ -47,51 +47,31 @@ def show_classification_page():
             font-family: 'Arial', sans-serif;
         }}
         .header-title {{
-            color: #1a1a1a; 
+            color: #1a1a1a;  /* Darker font color for improved contrast */
             font-size: 28px;
             font-weight: bold;
-            text-align: center;
-            margin: 20px 0;
+        }}
+        p, ul {{
+            color: #1a1a1a;  /* Standard text color */
         }}
         .step {{
             background-color: #e7f5e1;
-            padding: 15px;
+            padding: 10px;
             border-radius: 5px;
             margin-bottom: 10px;
-            color: #1a1a1a;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s;
-        }}
-        .step:hover {{
-            transform: translateY(-2px);
+            color: #1a1a1a;  /* Ensure text is visible */
         }}
         .stButton > button {{
-            background-color: #4caf50; 
+            background-color: #2196f3;  /* Bright blue button */
             color: white;
-            padding: 12px 24px;
-            font-size: 18px;
+            padding: 10px 20px;
+            font-size: 16px;
             border-radius: 8px;
             border: none;
             cursor: pointer;
-            transition: background-color 0.3s, transform 0.3s;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
         }}
         .stButton > button:hover {{
-            background-color: #388e3c;  
-            transform: scale(1.05);
-        }}
-        .suggestion-container {{
-            margin: 20px 0;
-        }}
-        .result-title {{
-            font-size: 30px;
-            font-weight: bold;
-            color: #2196f3;
-            text-align: center;
-            margin-top: 20px;
-        }}
-        .result-image {{
-            margin-top: 10px;
+            background-color: #1976d2;  /* Darker blue on hover */
         }}
     </style>
     """, unsafe_allow_html=True)
@@ -126,9 +106,9 @@ def show_classification_page():
         predicted_label = labels[predicted_class[0]]
 
         # Display the prediction
-        st.success(f"🗑️ Predicted Waste Type: **{predicted_label}**", icon="✅")
+        st.success(f"🗑️ Predicted Waste Type: **{predicted_label}**")
 
-        # Provide suggestions based on predicted label
+        # Suggestions based on predicted label
         provide_suggestions(predicted_label)
 
 def provide_suggestions(predicted_label):
@@ -185,13 +165,9 @@ def provide_suggestions(predicted_label):
 
     if predicted_label in suggestions:
         st.subheader("🔄 Suggestions for Recycling/Reusing/Degrading:")
-        suggestion_container = st.container()
-        
-        with suggestion_container:
-            for step in suggestions[predicted_label]["steps"]:
-                st.markdown(f"<div class='step'>{step}</div>", unsafe_allow_html=True)
-            st.image(suggestions[predicted_label]["image"], caption=f"How to handle {predicted_label}", use_column_width=True)
+        for step in suggestions[predicted_label]["steps"]:
+            st.markdown(f"<div class='step'>{step}</div>", unsafe_allow_html=True)
+        st.image(suggestions[predicted_label]["image"], caption=f"How to handle {predicted_label}", use_column_width=True)
 
     else:
         st.warning("No specific suggestions found for this type of waste.")
-
