@@ -14,7 +14,7 @@ def download_model_from_drive():
     url = f'https://drive.google.com/uc?id={file_id}'
     output = './weights/weights/modeltrash.weights.h5'  # Path to save the downloaded file
 
-    # Check if the model weights are already downloaded, if not, download them
+    # Check if the model weights are already downloaded
     if not os.path.exists(output):
         st.write("Downloading model weights from Google Drive...")
         os.makedirs('./weights', exist_ok=True)  # Ensure the weights folder exists
@@ -30,13 +30,14 @@ model_weights_path = './weights/weights/modeltrash.weights.h5'
 def load_model():
     model = model_arc()  # Get the architecture from utils.py
     if os.path.exists(model_weights_path):
+        st.write("Model weights found, loading...")
         model.load_weights(model_weights_path)  # Load saved weights
     else:
         st.error("Model weights file not found. Please check the path.")
     return model
 
 def show_classification_page():
-    # Custom CSS for background image and styling
+    # Custom CSS for background image
     st.markdown(f"""
     <style>
         .stApp {{
@@ -47,69 +48,31 @@ def show_classification_page():
             font-family: 'Arial', sans-serif;
         }}
         .header-title {{
-            color: #2E7D32; /* Dark Green */
-            font-size: 32px;
+            color: #1a1a1a;  /* Darker font color for improved contrast */
+            font-size: 28px;
             font-weight: bold;
-            text-align: center;
-            margin: 20px 0;
+        }}
+        p, ul {{
+            color: #1a1a1a;  /* Standard text color */
         }}
         .step {{
             background-color: #e7f5e1;
-            padding: 15px;
+            padding: 10px;
             border-radius: 5px;
             margin-bottom: 10px;
-            color: #1a1a1a;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s, background-color 0.3s;
-        }}
-        .step:hover {{
-            transform: translateY(-2px);
-            background-color: #d0e6d0; /* Light Green */
+            color: #1a1a1a;  /* Ensure text is visible */
         }}
         .stButton > button {{
-            background-color: #4caf50; 
+            background-color: #2196f3;  /* Bright blue button */
             color: white;
-            padding: 12px 24px;
-            font-size: 18px;
+            padding: 10px 20px;
+            font-size: 16px;
             border-radius: 8px;
             border: none;
             cursor: pointer;
-            transition: background-color 0.3s, transform 0.3s;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
         }}
         .stButton > button:hover {{
-            background-color: #388e3c;  
-            transform: scale(1.05);
-        }}
-        .suggestion-container {{
-            margin: 20px 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }}
-        .result-title {{
-            font-size: 30px;
-            font-weight: bold;
-            color: #2196f3;
-            text-align: center;
-            margin-top: 20px;
-        }}
-        .result-image {{
-            margin-top: 10px;
-            width: 80%; /* Ensure images are responsive */
-            max-width: 400px; /* Limit maximum width */
-            border-radius: 10px; /* Add rounded corners */
-        }}
-        .loading {{
-            font-size: 18px;
-            color: #ffa500; /* Orange color for loading text */
-            text-align: center;
-            margin-top: 10px;
-        }}
-        .highlight {{
-            background-color: #ffeb3b; /* Highlighted background for key information */
-            border-radius: 5px;
-            padding: 5px;
+            background-color: #1976d2;  /* Darker blue on hover */
         }}
     </style>
     """, unsafe_allow_html=True)
@@ -125,29 +88,35 @@ def show_classification_page():
     if image_file is not None:
         image = Image.open(image_file)
         st.image(image, caption="Uploaded Image", use_column_width=True)
-        
-        with st.spinner("🔍 Analyzing the image..."):
-            # Preprocess the uploaded image
+        st.write("🔍 Analyzing the image...")
+
+        # Preprocess the uploaded image
+        try:
             image_array = preprocess(image)
+        except Exception as e:
+            st.error(f"Error in preprocessing the image: {e}")
+            return
 
-            # Load the model
-            model = load_model()
+        # Load the model
+        model = load_model()
 
-            # Predict using the loaded model
+        # Predict using the loaded model
+        try:
             prediction = model.predict(image_array)
-
             # Get the predicted class index and label
             predicted_class = np.argmax(prediction, axis=1)
 
             # Get class labels
             labels = gen_labels()
-            predicted_label = labels[predicted_class[0]]
+            predicted_label = labels[predicted_class[0]] if predicted_class[0] < len(labels) else "Unknown"
 
             # Display the prediction
-            st.success(f"🗑️ Predicted Waste Type: **{predicted_label}**", icon="✅")
+            st.success(f"🗑️ Predicted Waste Type: **{predicted_label}**")
 
-            # Provide suggestions based on predicted label
+            # Suggestions based on predicted label
             provide_suggestions(predicted_label)
+        except Exception as e:
+            st.error(f"Error during prediction: {e}")
 
 def provide_suggestions(predicted_label):
     suggestions = {
@@ -203,25 +172,9 @@ def provide_suggestions(predicted_label):
 
     if predicted_label in suggestions:
         st.subheader("🔄 Suggestions for Recycling/Reusing/Degrading:")
-        suggestion_container = st.container()
-        
-        with suggestion_container:
-            for step in suggestions[predicted_label]["steps"]:
-                st.markdown(f"<div class='step'>{step}</div>", unsafe_allow_html=True)
-            st.image(suggestions[predicted_label]["image"], caption=f"How to handle {predicted_label}", use_column_width=True, output_format="auto")
-
-            # Add an interactive button for users to learn more
-            if st.button("Learn More About This Waste Type"):
-                st.markdown(f"<div class='highlight'>Learn more about how to effectively recycle and reuse {predicted_label}!</div>", unsafe_allow_html=True)
-                # Here you can link to additional resources or show more detailed information
+        for step in suggestions[predicted_label]["steps"]:
+            st.markdown(f"<div class='step'>{step}</div>", unsafe_allow_html=True)
+        st.image(suggestions[predicted_label]["image"], caption=f"How to handle {predicted_label}", use_column_width=True)
 
     else:
         st.warning("No specific suggestions found for this type of waste.")
-
-# Main function to run the Streamlit app
-def main():
-    download_model_from_drive()
-    show_classification_page()
-
-if __name__ == "__main__":
-    main()
