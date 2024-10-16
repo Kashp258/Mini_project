@@ -14,7 +14,7 @@ def download_model_from_drive():
     url = f'https://drive.google.com/uc?id={file_id}'
     output = './weights/weights/modeltrash.weights.h5'  # Path to save the downloaded file
 
-    # Check if the model weights are already downloaded, if not, download them
+    # Check if the model weights are already downloaded
     if not os.path.exists(output):
         st.write("Downloading model weights from Google Drive...")
         os.makedirs('./weights', exist_ok=True)  # Ensure the weights folder exists
@@ -30,6 +30,7 @@ model_weights_path = './weights/weights/modeltrash.weights.h5'
 def load_model():
     model = model_arc()  # Get the architecture from utils.py
     if os.path.exists(model_weights_path):
+        st.write("Model weights found, loading...")
         model.load_weights(model_weights_path)  # Load saved weights
     else:
         st.error("Model weights file not found. Please check the path.")
@@ -90,26 +91,32 @@ def show_classification_page():
         st.write("🔍 Analyzing the image...")
 
         # Preprocess the uploaded image
-        image_array = preprocess(image)
+        try:
+            image_array = preprocess(image)
+        except Exception as e:
+            st.error(f"Error in preprocessing the image: {e}")
+            return
 
         # Load the model
         model = load_model()
 
         # Predict using the loaded model
-        prediction = model.predict(image_array)
+        try:
+            prediction = model.predict(image_array)
+            # Get the predicted class index and label
+            predicted_class = np.argmax(prediction, axis=1)
 
-        # Get the predicted class index and label
-        predicted_class = np.argmax(prediction, axis=1)
+            # Get class labels
+            labels = gen_labels()
+            predicted_label = labels[predicted_class[0]] if predicted_class[0] < len(labels) else "Unknown"
 
-        # Get class labels
-        labels = gen_labels()
-        predicted_label = labels[predicted_class[0]]
+            # Display the prediction
+            st.success(f"🗑️ Predicted Waste Type: **{predicted_label}**")
 
-        # Display the prediction
-        st.success(f"🗑️ Predicted Waste Type: **{predicted_label}**")
-
-        # Suggestions based on predicted label
-        provide_suggestions(predicted_label)
+            # Suggestions based on predicted label
+            provide_suggestions(predicted_label)
+        except Exception as e:
+            st.error(f"Error during prediction: {e}")
 
 def provide_suggestions(predicted_label):
     suggestions = {
