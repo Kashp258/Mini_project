@@ -33,16 +33,36 @@ def load_model():
     return model
 
 def show_classification_page():
-    st.title("Waste Classification")
-    st.write("Upload an image of waste for classification.")
+    # Advanced user interface setup
+    st.title("♻️ Waste Classification System")
+    st.markdown("""
+    <style>
+        .stApp {
+            background-color: #f0f4f7;
+            font-family: 'Arial', sans-serif;
+        }
+        .header-title {
+            color: #4caf50;
+            font-size: 24px;
+        }
+        .step {
+            background-color: #e7f5e1;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+    </style>
+    """, unsafe_allow_html=True)
     
+    st.markdown("<p class='header-title'>Upload an image of waste to classify and receive recycling or reusing suggestions!</p>", unsafe_allow_html=True)
+
     # File uploader widget for image input
     image_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"], key="file_uploader_1")
 
     if image_file is not None:
         image = Image.open(image_file)
-        st.image(image, caption="Uploaded Image.", use_column_width=True)
-        st.write("Classifying...")
+        st.image(image, caption="Uploaded Image", use_column_width=True)
+        st.write("🔍 Analyzing the image...")
 
         # Preprocess the uploaded image
         image_array = preprocess(image)
@@ -61,7 +81,7 @@ def show_classification_page():
         predicted_label = labels[predicted_class[0]]
 
         # Display the prediction
-        st.write(f"Predicted Class: {predicted_label}")
+        st.success(f"🗑️ Predicted Waste Type: **{predicted_label}**")
 
         # Suggestions based on predicted label
         provide_suggestions(predicted_label)
@@ -70,57 +90,60 @@ def provide_suggestions(predicted_label):
     suggestions = {
         "Cardboard": {
             "steps": [
-                "1. Flatten the cardboard.",
-                "2. Remove any non-recyclable components (like plastic windows).",
-                "3. Place in the recycling bin."
+                "1. **Flatten** the cardboard.",
+                "2. **Remove** any non-recyclable components (like plastic windows).",
+                "3. **Place** in the recycling bin."
             ],
             "image": "https://example.com/cardboard.jpg"  # Replace with a valid image URL
         },
         "Compost": {
             "steps": [
-                "1. Collect kitchen scraps and yard waste.",
-                "2. Add to a compost bin.",
-                "3. Turn regularly to aerate and speed up decomposition."
+                "1. **Collect** kitchen scraps and yard waste.",
+                "2. **Add** to a compost bin.",
+                "3. **Turn** regularly to aerate and speed up decomposition."
             ],
             "image": "https://example.com/compost.jpg"  # Replace with a valid image URL
         },
         "Glass": {
             "steps": [
-                "1. Rinse the glass container.",
-                "2. Remove any lids or caps.",
-                "3. Place in the recycling bin."
+                "1. **Rinse** the glass container.",
+                "2. **Remove** any lids or caps.",
+                "3. **Place** in the recycling bin."
             ],
             "image": "https://example.com/glass.jpg"  # Replace with a valid image URL
         },
         "Metal": {
             "steps": [
-                "1. Clean the metal item to remove food residue.",
-                "2. Check for any specific recycling instructions.",
-                "3. Place in the metal recycling bin."
+                "1. **Clean** the metal item to remove food residue.",
+                "2. **Check** for any specific recycling instructions.",
+                "3. **Place** in the metal recycling bin."
             ],
             "image": "https://example.com/metal.jpg"  # Replace with a valid image URL
         },
         "Paper": {
             "steps": [
-                "1. Remove any staples or paperclips.",
-                "2. Flatten and sort the paper.",
-                "3. Place in the recycling bin."
+                "1. **Remove** any staples or paperclips.",
+                "2. **Flatten** and sort the paper.",
+                "3. **Place** in the recycling bin."
             ],
             "image": "https://example.com/paper.jpg"  # Replace with a valid image URL
         },
         "Plastic": {
             "steps": [
-                "1. Rinse the plastic container.",
-                "2. Check the recycling symbol for instructions.",
-                "3. Place in the recycling bin."
+                "1. **Rinse** the plastic container.",
+                "2. **Check** the recycling symbol for instructions.",
+                "3. **Place** in the recycling bin."
             ],
             "image": "https://example.com/plastic.jpg"  # Replace with a valid image URL
         }
     }
 
     if predicted_label in suggestions:
-        st.subheader("Suggestions for Recycling/Reusing/Degrading:")
+        st.subheader("🔄 Suggestions for Recycling/Reusing/Degrading:")
         for step in suggestions[predicted_label]["steps"]:
-            st.write(step)
-        st.image(suggestions[predicted_label]["image"], caption=f"How to handle {predicted_label}")
+            st.markdown(f"<div class='step'>{step}</div>", unsafe_allow_html=True)
+        st.image(suggestions[predicted_label]["image"], caption=f"How to handle {predicted_label}", use_column_width=True)
+
+    else:
+        st.warning("No specific suggestions found for this type of waste.")
 
