@@ -110,6 +110,7 @@ def show_classification_page():
             predicted_class = np.argmax(prediction, axis=1)
 
             # Get class labels
+            labels_path = './weights/labels.txt'
             labels = gen_labels(labels_path)  # Pass labels_path to gen_labels
             predicted_label = labels[predicted_class[0]] if predicted_class[0] < len(labels) else "Unknown"
 
