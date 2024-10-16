@@ -50,9 +50,11 @@ def model_arc():
 
     return model
 
-def gen_labels():
+def gen_labels(labels_path):
     """
-    Generate labels for the classes.
-    Modify this list according to your specific classes.
+    Generate labels from a specified file.
+    Reads labels from the provided file path.
     """
-    return ["Cardboard", "Plastic", "Compost", "Plastic", "Paper", "Metal"]  # Only 6 categories now
+    with open(labels_path, 'r') as file:
+        labels = file.read().splitlines()
+    return labels
