@@ -35,24 +35,42 @@ def load_model():
 def show_classification_page():
     # Advanced user interface setup
     st.title("♻️ Waste Classification System")
-    st.markdown("""
-    <style>
-        .stApp {
-            background-color: #f0f4f7;
-            font-family: 'Arial', sans-serif;
-        }
-        .header-title {
-            color: #4caf50;
-            font-size: 24px;
-        }
-        .step {
-            background-color: #e7f5e1;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 10px;
-        }
-    </style>
-    """, unsafe_allow_html=True)
+  st.markdown("""
+<style>
+    .stApp {
+        background-color: #f7f9fc;  /* Light background */
+        font-family: 'Arial', sans-serif;
+    }
+    .header-title {
+        color: #1a1a1a;  /* Darker font color for improved contrast */
+        font-size: 28px;
+        font-weight: bold;
+    }
+    p, ul {
+        color: #1a1a1a;  /* Standard text color */
+    }
+    .step {
+        background-color: #e7f5e1;
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        color: #1a1a1a;  /* Ensure text is visible */
+    }
+    .stButton > button {
+        background-color: #2196f3;  /* Bright blue button */
+        color: white;
+        padding: 10px 20px;
+        font-size: 16px;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+    }
+    .stButton > button:hover {
+        background-color: #1976d2;  /* Darker blue on hover */
+    }
+</style>
+""", unsafe_allow_html=True)
+
     
     st.markdown("<p class='header-title'>Upload an image of waste to classify and receive recycling or reusing suggestions!</p>", unsafe_allow_html=True)
 
