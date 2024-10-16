@@ -1,29 +1,35 @@
 import streamlit as st
 
+# Background image URL
+background_image_url = "https://png.pngtree.com/thumb_back/fh260/background/20220217/pngtree-green-simple-atmospheric-waste-classification-illustration-background-image_953325.jpg"
+
 def show_home_page():
-    # Custom CSS for better aesthetics
-    st.markdown("""
+    # Custom CSS for better aesthetics and background image
+    st.markdown(f"""
     <style>
-        .stApp {
-            background-color: #f7f9fc;  /* Light background */
+        .stApp {{
+            background-image: url("{background_image_url}");
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
             font-family: 'Arial', sans-serif;
-        }
-        .header-title {
+        }}
+        .header-title {{
             color: #1a1a1a;  /* Darker font color for improved contrast */
             font-size: 28px;
             font-weight: bold;
-        }
-        p, ul {
+        }}
+        p, ul {{
             color: #1a1a1a;  /* Standard text color */
-        }
-        .step {
+        }}
+        .step {{
             background-color: #e7f5e1;
             padding: 10px;
             border-radius: 5px;
             margin-bottom: 10px;
             color: #1a1a1a;  /* Ensure text is visible */
-        }
-        .stButton > button {
+        }}
+        .stButton > button {{
             background-color: #2196f3;  /* Bright blue button */
             color: white;
             padding: 10px 20px;
@@ -31,15 +37,15 @@ def show_home_page():
             border-radius: 8px;
             border: none;
             cursor: pointer;
-        }
-        .stButton > button:hover {
+        }}
+        .stButton > button:hover {{
             background-color: #1976d2;  /* Darker blue on hover */
-        }
+        }}
     </style>
     """, unsafe_allow_html=True)
 
     # Header
-    st.markdown("<h1 class='header'>Welcome to the Intelligent Waste Classification App!</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 class='header-title'>Welcome to the Intelligent Waste Classification App!</h1>", unsafe_allow_html=True)
     
     # Add Hero Image
     st.image("https://example.com/hero-image.jpg", use_column_width=True)
