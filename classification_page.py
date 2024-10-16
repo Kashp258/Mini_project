@@ -5,6 +5,9 @@ from PIL import Image
 from utils import preprocess, model_arc, gen_labels
 import gdown
 
+# Background image URL
+background_image_url = "https://png.pngtree.com/thumb_back/fh260/background/20220217/pngtree-green-simple-atmospheric-waste-classification-illustration-background-image_953325.jpg"
+
 # Function to download the model from Google Drive
 def download_model_from_drive():
     file_id = '1ruV_1zQcxd4E2-5c0dhIK3vQhlWNMQRb'  # Your Google Drive file ID
@@ -33,30 +36,32 @@ def load_model():
     return model
 
 def show_classification_page():
-    # Advanced user interface setup
-    st.title("♻️ Waste Classification System")
-    st.markdown("""
+    # Custom CSS for background image
+    st.markdown(f"""
     <style>
-        .stApp {
-            background-color: #f7f9fc;  /* Light background */
+        .stApp {{
+            background-image: url("{background_image_url}");
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
             font-family: 'Arial', sans-serif;
-        }
-        .header-title {
+        }}
+        .header-title {{
             color: #1a1a1a;  /* Darker font color for improved contrast */
             font-size: 28px;
             font-weight: bold;
-        }
-        p, ul {
+        }}
+        p, ul {{
             color: #1a1a1a;  /* Standard text color */
-        }
-        .step {
+        }}
+        .step {{
             background-color: #e7f5e1;
             padding: 10px;
             border-radius: 5px;
             margin-bottom: 10px;
             color: #1a1a1a;  /* Ensure text is visible */
-        }
-        .stButton > button {
+        }}
+        .stButton > button {{
             background-color: #2196f3;  /* Bright blue button */
             color: white;
             padding: 10px 20px;
@@ -64,13 +69,16 @@ def show_classification_page():
             border-radius: 8px;
             border: none;
             cursor: pointer;
-        }
-        .stButton > button:hover {
+        }}
+        .stButton > button:hover {{
             background-color: #1976d2;  /* Darker blue on hover */
-        }
+        }}
     </style>
     """, unsafe_allow_html=True)
 
+    # Advanced user interface setup
+    st.title("♻️ Waste Classification System")
+    
     st.markdown("<p class='header-title'>Upload an image of waste to classify and receive recycling or reusing suggestions!</p>", unsafe_allow_html=True)
 
     # File uploader widget for image input
@@ -160,5 +168,6 @@ def provide_suggestions(predicted_label):
         for step in suggestions[predicted_label]["steps"]:
             st.markdown(f"<div class='step'>{step}</div>", unsafe_allow_html=True)
         st.image(suggestions[predicted_label]["image"], caption=f"How to handle {predicted_label}", use_column_width=True)
+
     else:
         st.warning("No specific suggestions found for this type of waste.")
