@@ -13,33 +13,81 @@ def show_home_page():
             background-repeat: no-repeat;
             background-attachment: fixed;
             font-family: 'Arial', sans-serif;
+            color: #1a1a1a;
         }}
         .header-title {{
-            color: #1a1a1a;  /* Darker font color for improved contrast */
-            font-size: 28px;
+            font-size: 40px;
             font-weight: bold;
+            text-align: center;
+            margin-top: 50px;
+            text-shadow: 2px 2px 5px rgba(255, 255, 255, 0.9);
+            animation: fadeIn 1s;
         }}
-        p, ul {{
-            color: #1a1a1a;  /* Standard text color */
+        @keyframes fadeIn {{
+            from {{ opacity: 0; }}
+            to {{ opacity: 1; }}
         }}
-        .step {{
-            background-color: #e7f5e1;
-            padding: 10px;
-            border-radius: 5px;
+        .intro {{
+            font-size: 22px;
+            text-align: center;
+            margin: 20px auto;
+            max-width: 800px;
+            animation: slideIn 1s;
+        }}
+        @keyframes slideIn {{
+            from {{ transform: translateY(-20px); opacity: 0; }}
+            to {{ transform: translateY(0); opacity: 1; }}
+        }}
+        .feature {{
+            background-color: rgba(255, 255, 255, 0.9); /* Slightly transparent background */
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }}
+        .feature:hover {{
+            transform: translateY(-5px);
+            box-shadow: 0 6px 30px rgba(0, 0, 0, 0.25);
+        }}
+        .feature-title {{
+            font-weight: bold;
+            color: #2196f3;
+            font-size: 24px;
             margin-bottom: 10px;
-            color: #1a1a1a;  /* Ensure text is visible */
         }}
         .stButton > button {{
-            background-color: #2196f3;  /* Bright blue button */
+            background-color: #4caf50;  /* Green button */
             color: white;
-            padding: 10px 20px;
-            font-size: 16px;
+            padding: 12px 24px;
+            font-size: 18px;
             border-radius: 8px;
             border: none;
             cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
         }}
         .stButton > button:hover {{
-            background-color: #1976d2;  /* Darker blue on hover */
+            background-color: #388e3c;  /* Darker green on hover */
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+        }}
+        footer {{
+            text-align: center;
+            padding: 20px;
+            font-size: 14px;
+            color: #555;
+        }}
+        .stats-container {{
+            text-align: center;
+            margin: 40px 0;
+            animation: bounceIn 1s;
+        }}
+        @keyframes bounceIn {{
+            0% {{ transform: scale(0); }}
+            50% {{ transform: scale(1.1); }}
+            100% {{ transform: scale(1); }}
         }}
     </style>
     """, unsafe_allow_html=True)
@@ -49,36 +97,56 @@ def show_home_page():
     
     # Add Hero Image
     st.image("https://example.com/hero-image.jpg", use_column_width=True)
-    
+
     # Introduction Section
-    st.markdown("""
-    **This application helps you classify waste into different categories effortlessly.**
-    Whether you are at home, at school, or in a business, understanding how to manage your waste is critical for a cleaner and greener environment. 
-    """)
+    st.markdown("<p class='intro'>**This application helps you classify waste into different categories effortlessly.**</p>", unsafe_allow_html=True)
+    st.markdown("<p class='intro'>Whether you are at home, at school, or in a business, understanding how to manage your waste is critical for a cleaner and greener environment.</p>", unsafe_allow_html=True)
 
     # Call to Action Buttons
     col1, col2 = st.columns(2)
     
     with col1:
-        st.markdown(
-            "<a href='#' class='btn-primary' onclick='window.location.href = \"/?Classification\";'>Get Started</a>",
-            unsafe_allow_html=True
-        )
+        if st.button("Get Started", key="get_started"):
+            st.markdown(
+                "<script>window.location.href = '/?Classification';</script>",
+                unsafe_allow_html=True
+            )
 
     with col2:
-        st.markdown(
-            "<a href='#' class='btn-primary' onclick='window.location.href = \"/?About\";'>Learn More</a>",
-            unsafe_allow_html=True
-        )
+        if st.button("Learn More", key="learn_more"):
+            st.markdown(
+                "<script>window.location.href = '/?About';</script>",
+                unsafe_allow_html=True
+            )
 
     # Features Section
     st.subheader("Why Use This Application?")
+    
+    feature_list = [
+        ("Accurate Classification", "Utilizes state-of-the-art machine learning models to accurately classify various waste types."),
+        ("Real-Time Suggestions", "Receive instant suggestions on recycling, reusing, or disposing of waste responsibly."),
+        ("Easy to Use", "Simply upload an image, and the app intelligently categorizes your waste."),
+        ("Educational Resources", "Learn about waste management and how you can contribute to a sustainable future.")
+    ]
+
+    for title, description in feature_list:
+        st.markdown(f"<div class='feature' onclick=\"alert('Feature: {title}')\"><div class='feature-title'>{title}</div><p>{description}</p></div>", unsafe_allow_html=True)
+
+    # Engaging Section with Statistics
+    st.subheader("Impact Statistics")
     st.markdown("""
-    - **Accurate Classification:** Utilizes state-of-the-art machine learning models.
-    - **Real-Time Suggestions:** Receive suggestions on recycling, reusing, or disposing of waste.
-    - **Easy to Use:** Simply upload an image, and the app does the rest.
-    - **Educational:** Helps users understand how to manage waste efficiently.
-    """)
+    <div class='stats-container'>
+        <h3>Join the Movement!</h3>
+        <p>Over 1 million users have classified their waste with us!</p>
+        <p>Together, we have recycled:</p>
+        <ul style='list-style-type: none; padding: 0;'>
+            <li>🔄 <strong>500 tons</strong> of plastic waste</li>
+            <li>🔄 <strong>300 tons</strong> of paper waste</li>
+            <li>🔄 <strong>200 tons</strong> of glass waste</li>
+        </ul>
+    </div>
+    """, unsafe_allow_html=True)
 
     # Footer
-    st.markdown("<footer style='text-align: center; padding-top: 20px;'>Powered by Streamlit & Machine Learning</footer>", unsafe_allow_html=True)
+    st.markdown("<footer>Powered by Streamlit & Machine Learning</footer>", unsafe_allow_html=True)
+
