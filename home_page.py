@@ -2,41 +2,41 @@ import streamlit as st
 
 def show_home_page():
     # Custom CSS for better aesthetics
- st.markdown("""
-<style>
-    .stApp {
-        background-color: #f7f9fc;  /* Light background */
-        font-family: 'Arial', sans-serif;
-    }
-    .header-title {
-        color: #1a1a1a;  /* Darker font color for improved contrast */
-        font-size: 28px;
-        font-weight: bold;
-    }
-    p, ul {
-        color: #1a1a1a;  /* Standard text color */
-    }
-    .step {
-        background-color: #e7f5e1;
-        padding: 10px;
-        border-radius: 5px;
-        margin-bottom: 10px;
-        color: #1a1a1a;  /* Ensure text is visible */
-    }
-    .stButton > button {
-        background-color: #2196f3;  /* Bright blue button */
-        color: white;
-        padding: 10px 20px;
-        font-size: 16px;
-        border-radius: 8px;
-        border: none;
-        cursor: pointer;
-    }
-    .stButton > button:hover {
-        background-color: #1976d2;  /* Darker blue on hover */
-    }
-</style>
-""", unsafe_allow_html=True)
+    st.markdown("""
+    <style>
+        .stApp {
+            background-color: #f7f9fc;  /* Light background */
+            font-family: 'Arial', sans-serif;
+        }
+        .header-title {
+            color: #1a1a1a;  /* Darker font color for improved contrast */
+            font-size: 28px;
+            font-weight: bold;
+        }
+        p, ul {
+            color: #1a1a1a;  /* Standard text color */
+        }
+        .step {
+            background-color: #e7f5e1;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            color: #1a1a1a;  /* Ensure text is visible */
+        }
+        .stButton > button {
+            background-color: #2196f3;  /* Bright blue button */
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+        }
+        .stButton > button:hover {
+            background-color: #1976d2;  /* Darker blue on hover */
+        }
+    </style>
+    """, unsafe_allow_html=True)
 
     # Header
     st.markdown("<h1 class='header'>Welcome to the Intelligent Waste Classification App!</h1>", unsafe_allow_html=True)
