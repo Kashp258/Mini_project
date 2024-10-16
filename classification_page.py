@@ -47,8 +47,8 @@ def show_classification_page():
             font-family: 'Arial', sans-serif;
         }}
         .header-title {{
-            color: #2E7D32; /* Dark Green */
-            font-size: 32px;
+            color: #1a1a1a; 
+            font-size: 28px;
             font-weight: bold;
             text-align: center;
             margin: 20px 0;
@@ -60,11 +60,10 @@ def show_classification_page():
             margin-bottom: 10px;
             color: #1a1a1a;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s, background-color 0.3s;
+            transition: transform 0.3s;
         }}
         .step:hover {{
             transform: translateY(-2px);
-            background-color: #d0e6d0; /* Light Green */
         }}
         .stButton > button {{
             background-color: #4caf50; 
@@ -83,9 +82,6 @@ def show_classification_page():
         }}
         .suggestion-container {{
             margin: 20px 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
         }}
         .result-title {{
             font-size: 30px;
@@ -95,15 +91,6 @@ def show_classification_page():
             margin-top: 20px;
         }}
         .result-image {{
-            margin-top: 10px;
-            width: 80%; /* Ensure images are responsive */
-            max-width: 400px; /* Limit maximum width */
-            border-radius: 10px; /* Add rounded corners */
-        }}
-        .loading {{
-            font-size: 18px;
-            color: #ffa500; /* Orange color for loading text */
-            text-align: center;
             margin-top: 10px;
         }}
     </style>
@@ -120,29 +107,29 @@ def show_classification_page():
     if image_file is not None:
         image = Image.open(image_file)
         st.image(image, caption="Uploaded Image", use_column_width=True)
-        
-        with st.spinner("🔍 Analyzing the image..."):
-            # Preprocess the uploaded image
-            image_array = preprocess(image)
+        st.write("🔍 Analyzing the image...")
 
-            # Load the model
-            model = load_model()
+        # Preprocess the uploaded image
+        image_array = preprocess(image)
 
-            # Predict using the loaded model
-            prediction = model.predict(image_array)
+        # Load the model
+        model = load_model()
 
-            # Get the predicted class index and label
-            predicted_class = np.argmax(prediction, axis=1)
+        # Predict using the loaded model
+        prediction = model.predict(image_array)
 
-            # Get class labels
-            labels = gen_labels()
-            predicted_label = labels[predicted_class[0]]
+        # Get the predicted class index and label
+        predicted_class = np.argmax(prediction, axis=1)
 
-            # Display the prediction
-            st.success(f"🗑️ Predicted Waste Type: **{predicted_label}**", icon="✅")
+        # Get class labels
+        labels = gen_labels()
+        predicted_label = labels[predicted_class[0]]
 
-            # Provide suggestions based on predicted label
-            provide_suggestions(predicted_label)
+        # Display the prediction
+        st.success(f"🗑️ Predicted Waste Type: **{predicted_label}**", icon="✅")
+
+        # Provide suggestions based on predicted label
+        provide_suggestions(predicted_label)
 
 def provide_suggestions(predicted_label):
     suggestions = {
@@ -203,7 +190,7 @@ def provide_suggestions(predicted_label):
         with suggestion_container:
             for step in suggestions[predicted_label]["steps"]:
                 st.markdown(f"<div class='step'>{step}</div>", unsafe_allow_html=True)
-            st.image(suggestions[predicted_label]["image"], caption=f"How to handle {predicted_label}", use_column_width=True, output_format="auto")
+            st.image(suggestions[predicted_label]["image"], caption=f"How to handle {predicted_label}", use_column_width=True)
 
     else:
         st.warning("No specific suggestions found for this type of waste.")
