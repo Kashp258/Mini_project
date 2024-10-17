@@ -62,8 +62,8 @@ def show_classification_page():
     st.write("Upload an image of waste to classify it, or use your webcam.")
 
     # Load the model and labels when the app starts
-    model = None
-    labels = None
+    model = 'keras_model.h5'
+    labels = 'labels.txt'
 
     try:
         model = load_model_func()
