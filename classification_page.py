@@ -1,184 +1,92 @@
 import streamlit as st
-import numpy as np
 import os
-from PIL import Image
-from utils import preprocess, model_arc, gen_labels
-import gdown
+import numpy as np
+from keras.models import load_model
+from keras.layers import DepthwiseConv2D
+from keras.preprocessing import image
+from keras.applications.mobilenet_v2 import preprocess_input  # Adjust according to your model
 
-# Background image URL
-background_image_url = "https://png.pngtree.com/thumb_back/fh260/background/20220217/pngtree-green-simple-atmospheric-waste-classification-illustration-background-image_953325.jpg"
+# Custom DepthwiseConv2D class to handle loading without 'groups' argument
+class CustomDepthwiseConv2D(DepthwiseConv2D):
+    def __init__(self, *args, **kwargs):
+        # Remove unsupported 'groups' argument if present
+        kwargs.pop('groups', None)
+        super().__init__(*args, **kwargs)
 
-# Function to download the model from Google Drive
-def download_model_from_drive():
-    file_id = '1v2vEY_34pVY_x37eSFKYaT8E4cJ2LwcW'  # Your Google Drive file ID
-    url = f'https://drive.google.com/uc?id={file_id}'
-    output = './weights/keras_model.h5'  # Path to save the downloaded file
-
-    # Check if the model weights are already downloaded
-    if not os.path.exists(output):
-        st.write("Downloading model weights from Google Drive...")
-        os.makedirs('./weights', exist_ok=True)  # Ensure the weights folder exists
-        gdown.download(url, output, quiet=False)
-    else:
-        st.write("Model weights already downloaded.")
-
-# Path to the downloaded model weights
-model_weights_path = './weights/keras_model.h5'
-
-# Define the path to the labels file
-labels_path = './weights/labels.txt'
-
-# Cache the model loading to avoid reloading on every interaction
-@st.cache_resource
-def load_model():
-    model = model_arc()  # Get the architecture from utils.py
-    if os.path.exists(model_weights_path):
-        st.write("Model weights found, loading...")
-        model.load_weights(model_weights_path)  # Load saved weights
-    else:
-        st.error("Model weights file not found. Please check the path.")
+# Function to load the model
+def load_model_func():
+    model_path = 'keras_model.h5'  # or provide the absolute path
+    print(f"Trying to load model from: {model_path}")
+    
+    # Check if the model file exists
+    if not os.path.isfile(model_path):
+        raise FileNotFoundError(f"Model file not found: {model_path}")
+    
+    # Load the model with custom_objects
+    model = load_model(model_path, custom_objects={'DepthwiseConv2D': CustomDepthwiseConv2D})
+    print("Model loaded successfully.")
     return model
 
-def show_classification_page():
-    # Custom CSS for background image
-    st.markdown(f"""
-    <style>
-        .stApp {{
-            background-image: url("{background_image_url}");
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            font-family: 'Arial', sans-serif;
-        }}
-        .header-title {{
-            color: #1a1a1a;  /* Darker font color for improved contrast */
-            font-size: 28px;
-            font-weight: bold;
-        }}
-        p, ul {{
-            color: #1a1a1a;  /* Standard text color */
-        }}
-        .step {{
-            background-color: #e7f5e1;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 10px;
-            color: #1a1a1a;  /* Ensure text is visible */
-        }}
-        .stButton > button {{
-            background-color: #2196f3;  /* Bright blue button */
-            color: white;
-            padding: 10px 20px;
-            font-size: 16px;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-        }}
-        .stButton > button:hover {{
-            background-color: #1976d2;  /* Darker blue on hover */
-        }}
-    </style>
-    """, unsafe_allow_html=True)
+# Load the labels from the labels file
+def load_labels():
+    labels_path = 'labels.txt'  # or provide the absolute path
+    print(f"Trying to load labels from: {labels_path}")
 
-    # Advanced user interface setup
-    st.title("♻️ Waste Classification System")
-    
-    st.markdown("<p class='header-title'>Upload an image of waste to classify and receive recycling or reusing suggestions!</p>", unsafe_allow_html=True)
+    # Check if the labels file exists
+    if not os.path.isfile(labels_path):
+        raise FileNotFoundError(f"Labels file not found: {labels_path}")
 
-    # File uploader widget for image input
-    image_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"], key="file_uploader_1")
+    with open(labels_path, 'r') as file:
+        labels = file.read().splitlines()
+    print("Labels loaded successfully.")
+    return labels
 
-    if image_file is not None:
-        image = Image.open(image_file)
-        st.image(image, caption="Uploaded Image", use_column_width=True)
-        st.write("🔍 Analyzing the image...")
+# Function to preprocess the uploaded image
+def preprocess_image(uploaded_file):
+    img = image.load_img(uploaded_file, target_size=(224, 224))  # Adjust according to your model's input size
+    img_array = image.img_to_array(img)
+    img_array = np.expand_dims(img_array, axis=0)  # Add batch dimension
+    img_array = preprocess_input(img_array)  # Preprocess for your model (e.g., MobileNetV2)
+    return img_array
 
-        # Preprocess the uploaded image
-        try:
-            image_array = preprocess(image)
-        except Exception as e:
-            st.error(f"Error in preprocessing the image: {e}")
-            return
+# Check the current working directory
+print("Current Working Directory:", os.getcwd())
 
-        # Load the model
-        model = load_model()
+# Load the model and labels when the app starts
+model = None
+labels = None
 
-        # Predict using the loaded model
-        try:
-            prediction = model.predict(image_array)
-            # Get the predicted class index and label
-            predicted_class = np.argmax(prediction, axis=1)
+try:
+    model = load_model_func()
+except Exception as e:
+    st.error(f"Error loading model: {e}")
 
-            # Get class labels
-            labels_path = './weights/labels.txt'
-            labels = gen_labels(labels_path)  # Pass labels_path to gen_labels
-            predicted_label = labels[predicted_class[0]] if predicted_class[0] < len(labels) else "Unknown"
+try:
+    labels = load_labels()
+except Exception as e:
+    st.error(f"Error loading labels: {e}")
 
-            # Display the prediction
-            st.success(f"🗑️ Predicted Waste Type: **{predicted_label}**")
+# Streamlit app layout
+st.title("Waste Classification App")
+st.write("Upload an image of waste to classify it.")
 
-            # Suggestions based on predicted label
-            provide_suggestions(predicted_label)
-        except Exception as e:
-            st.error(f"Error during prediction: {e}")
+# Image upload
+uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
 
-def provide_suggestions(predicted_label):
-    suggestions = {
-        "Cardboard": {
-            "steps": [
-                "1. **Flatten** the cardboard.",
-                "2. **Remove** any non-recyclable components (like plastic windows).",
-                "3. **Place** in the recycling bin."
-            ],
-            "image": "https://example.com/cardboard.jpg"  # Replace with a valid image URL
-        },
-        "Compost": {
-            "steps": [
-                "1. **Collect** kitchen scraps and yard waste.",
-                "2. **Add** to a compost bin.",
-                "3. **Turn** regularly to aerate and speed up decomposition."
-            ],
-            "image": "https://example.com/compost.jpg"  # Replace with a valid image URL
-        },
-        "Glass": {
-            "steps": [
-                "1. **Rinse** the glass container.",
-                "2. **Remove** any lids or caps.",
-                "3. **Place** in the recycling bin."
-            ],
-            "image": "https://example.com/glass.jpg"  # Replace with a valid image URL
-        },
-        "Metal": {
-            "steps": [
-                "1. **Clean** the metal item to remove food residue.",
-                "2. **Check** for any specific recycling instructions.",
-                "3. **Place** in the metal recycling bin."
-            ],
-            "image": "https://example.com/metal.jpg"  # Replace with a valid image URL
-        },
-        "Paper": {
-            "steps": [
-                "1. **Remove** any staples or paperclips.",
-                "2. **Flatten** and sort the paper.",
-                "3. **Place** in the recycling bin."
-            ],
-            "image": "https://example.com/paper.jpg"  # Replace with a valid image URL
-        },
-        "Plastic": {
-            "steps": [
-                "1. **Rinse** the plastic container.",
-                "2. **Check** the recycling symbol for instructions.",
-                "3. **Place** in the recycling bin."
-            ],
-            "image": "https://example.com/plastic.jpg"  # Replace with a valid image URL
-        }
-    }
+if uploaded_file is not None:
+    # Display uploaded image
+    st.image(uploaded_file, caption='Uploaded Image', use_column_width=True)
+    st.write("")
+    st.success("Image uploaded successfully!")
 
-    if predicted_label in suggestions:
-        st.subheader("🔄 Suggestions for Recycling/Reusing/Degrading:")
-        for step in suggestions[predicted_label]["steps"]:
-            st.markdown(f"<div class='step'>{step}</div>", unsafe_allow_html=True)
-        st.image(suggestions[predicted_label]["image"], caption=f"How to handle {predicted_label}", use_column_width=True)
-
+    # Check if the model was loaded successfully before making predictions
+    if model is not None and labels is not None:
+        # Preprocess the image and make predictions using the model
+        image_data = preprocess_image(uploaded_file)
+        predictions = model.predict(image_data)
+        predicted_label = labels[np.argmax(predictions)]
+        
+        # Display the predicted label
+        st.write(f"Predicted label: {predicted_label}")
     else:
-        st.warning("No specific suggestions found for this type of waste.")
+        st.error("Model or labels not available. Please check if they were loaded correctly.")
