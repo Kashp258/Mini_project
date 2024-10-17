@@ -54,7 +54,7 @@ def get_advanced_suggestions(predicted_label):
     prompt = f"Give detailed, actionable suggestions on how to recycle, reuse, or properly dispose of {predicted_label}. Include environmental benefits and easy-to-follow steps."
     
     response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
+        model="gpt-3.5-turbo",  # Specify the desired model
         messages=[
             {"role": "user", "content": prompt}
         ],
@@ -62,7 +62,7 @@ def get_advanced_suggestions(predicted_label):
         temperature=0.7
     )
     
-    suggestions = response.choices[0].message['content'].strip()
+    suggestions = response['choices'][0]['message']['content'].strip()
     return suggestions
 
 # Show classification page
