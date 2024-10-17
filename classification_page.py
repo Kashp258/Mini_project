@@ -62,32 +62,32 @@ def add_bg_from_url():
 # Function to provide recycling, reusing, or degrading suggestions
 def get_suggestions(waste_type):
     suggestions = {
-        "cardboard": [
+        "Cardboard": [
             "Reuse clean cardboard boxes for storage or shipping.",
             "Recycle cardboard at a local recycling facility.",
             "Avoid soiled cardboard as it may not be accepted for recycling."
         ],
-        "compost": [
+        "Compost": [
             "Add compostable items to a home compost bin.",
             "Use compost as a natural fertilizer for plants.",
             "Ensure only biodegradable items are added to compost."
         ],
-        "glass": [
+        "Glass": [
             "Recycle glass bottles and jars at designated drop-off points.",
             "Reuse glass containers for storage or craft projects.",
             "Avoid mixing glass with other waste to prevent contamination."
         ],
-        "metal": [
+        "Metal": [
             "Recycle aluminum cans and metal scraps at recycling centers.",
             "Repurpose metal items for DIY projects or home repairs.",
             "Separate metals based on type (aluminum, steel, etc.) for efficient recycling."
         ],
-        "paper": [
+        "Paper": [
             "Recycle clean paper products such as newspapers and office paper.",
             "Reuse paper for notes or as wrapping material.",
             "Avoid recycling paper with heavy ink or contamination."
         ],
-        "plastic": [
+        "Plastic": [
             "Recycle plastic bottles, containers, and packaging where accepted.",
             "Opt for reusable containers to reduce plastic waste.",
             "Clean and dry plastics before recycling to ensure acceptance."
