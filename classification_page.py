@@ -53,14 +53,16 @@ def classify_image(model, labels, image_data):
 def get_advanced_suggestions(predicted_label):
     prompt = f"Give detailed, actionable suggestions on how to recycle, reuse, or properly dispose of {predicted_label}. Include environmental benefits and easy-to-follow steps."
     
-    response = openai.Completion.create(
-        engine="text-davinci-003",
-        prompt=prompt,
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "user", "content": prompt}
+        ],
         max_tokens=150,
         temperature=0.7
     )
     
-    suggestions = response.choices[0].text.strip()
+    suggestions = response.choices[0].message['content'].strip()
     return suggestions
 
 # Show classification page
