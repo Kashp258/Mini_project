@@ -49,44 +49,43 @@ def preprocess_image(uploaded_file):
     img_array = preprocess_input(img_array)  # Preprocess for your model (e.g., MobileNetV2)
     return img_array
 
-# Check the current working directory
-print("Current Working Directory:", os.getcwd())
+# Show classification page
+def show_classification_page():
+    # Streamlit app layout
+    st.title("Waste Classification App")
+    st.write("Upload an image of waste to classify it.")
 
-# Load the model and labels when the app starts
-model = None
-labels = None
+    # Load the model and labels when the app starts
+    model = None
+    labels = None
 
-try:
-    model = load_model_func()
-except Exception as e:
-    st.error(f"Error loading model: {e}")
+    try:
+        model = load_model_func()
+    except Exception as e:
+        st.error(f"Error loading model: {e}")
 
-try:
-    labels = load_labels()
-except Exception as e:
-    st.error(f"Error loading labels: {e}")
+    try:
+        labels = load_labels()
+    except Exception as e:
+        st.error(f"Error loading labels: {e}")
 
-# Streamlit app layout
-st.title("Waste Classification App")
-st.write("Upload an image of waste to classify it.")
+    # Image upload
+    uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
 
-# Image upload
-uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
+    if uploaded_file is not None:
+        # Display uploaded image
+        st.image(uploaded_file, caption='Uploaded Image', use_column_width=True)
+        st.write("")
+        st.success("Image uploaded successfully!")
 
-if uploaded_file is not None:
-    # Display uploaded image
-    st.image(uploaded_file, caption='Uploaded Image', use_column_width=True)
-    st.write("")
-    st.success("Image uploaded successfully!")
+        # Check if the model was loaded successfully before making predictions
+        if model is not None and labels is not None:
+            # Preprocess the image and make predictions using the model
+            image_data = preprocess_image(uploaded_file)
+            predictions = model.predict(image_data)
+            predicted_label = labels[np.argmax(predictions)]
 
-    # Check if the model was loaded successfully before making predictions
-    if model is not None and labels is not None:
-        # Preprocess the image and make predictions using the model
-        image_data = preprocess_image(uploaded_file)
-        predictions = model.predict(image_data)
-        predicted_label = labels[np.argmax(predictions)]
-        
-        # Display the predicted label
-        st.write(f"Predicted label: {predicted_label}")
-    else:
-        st.error("Model or labels not available. Please check if they were loaded correctly.")
+            # Display the predicted label
+            st.write(f"Predicted label: {predicted_label}")
+        else:
+            st.error("Model or labels not available. Please check if they were loaded correctly.")
