@@ -50,32 +50,32 @@ def classify_image(model, labels, image_data):
 # Function to get recycling suggestions based on the predicted label
 def get_suggestions(predicted_label):
     suggestions = {
-        "plastic": [
+        "Plastic": [
             "1. Recycle plastic containers by rinsing and placing them in recycling bins.",
             "2. Consider using reusable bags instead of plastic ones.",
             "3. Upcycle plastic bottles into planters or storage containers."
         ],
-        "metal": [
+        "Metal": [
             "1. Clean and recycle metal cans in your local recycling program.",
             "2. Use metal containers for storage instead of plastic.",
             "3. Donate old metal items instead of throwing them away."
         ],
-        "paper": [
+        "Paper": [
             "1. Recycle paper products like newspapers and cardboard.",
             "2. Use both sides of paper before discarding.",
             "3. Shred sensitive documents and recycle the scraps."
         ],
-        "glass": [
+        "Glass": [
             "1. Rinse glass jars and bottles before recycling them.",
             "2. Consider using glass containers for food storage.",
             "3. Repurpose glass jars as vases or decorative items."
         ],
-        "compost": [
+        "Compost": [
             "1. Compost kitchen scraps to create nutrient-rich soil.",
             "2. Use compost bins or piles to reduce waste.",
             "3. Educate others about the benefits of composting."
         ],
-        "cardboard": [
+        "Cardboard": [
             "1. Flatten cardboard boxes before recycling.",
             "2. Reuse cardboard for crafts or storage.",
             "3. Consider donating cardboard boxes to local schools or charities."
