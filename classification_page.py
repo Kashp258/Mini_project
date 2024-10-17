@@ -50,32 +50,32 @@ def classify_image(model, labels, image_data):
 # Function to get recycling suggestions based on the predicted label
 def get_suggestions(predicted_label):
     suggestions = {
-        "Plastic": [
+        "plastic": [
             "1. Recycle plastic containers by rinsing and placing them in recycling bins.",
             "2. Consider using reusable bags instead of plastic ones.",
             "3. Upcycle plastic bottles into planters or storage containers."
         ],
-        "Metal": [
+        "metal": [
             "1. Clean and recycle metal cans in your local recycling program.",
             "2. Use metal containers for storage instead of plastic.",
             "3. Donate old metal items instead of throwing them away."
         ],
-        "Paper": [
+        "paper": [
             "1. Recycle paper products like newspapers and cardboard.",
             "2. Use both sides of paper before discarding.",
             "3. Shred sensitive documents and recycle the scraps."
         ],
-        "Glass": [
+        "glass": [
             "1. Rinse glass jars and bottles before recycling them.",
             "2. Consider using glass containers for food storage.",
             "3. Repurpose glass jars as vases or decorative items."
         ],
-        "Compost": [
+        "compost": [
             "1. Compost kitchen scraps to create nutrient-rich soil.",
             "2. Use compost bins or piles to reduce waste.",
             "3. Educate others about the benefits of composting."
         ],
-        "Cardboard": [
+        "cardboard": [
             "1. Flatten cardboard boxes before recycling.",
             "2. Reuse cardboard for crafts or storage.",
             "3. Consider donating cardboard boxes to local schools or charities."
@@ -92,6 +92,9 @@ def show_classification_page():
         body {
             background-image: url("https://png.pngtree.com/thumb_back/fh260/background/20220217/pngtree-green-simple-atmospheric-waste-classification-illustration-background-image_953325.jpg");
             background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
             color: #333;
             font-family: 'Arial', sans-serif;
         }
