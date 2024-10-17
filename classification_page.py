@@ -16,29 +16,21 @@ class CustomDepthwiseConv2D(DepthwiseConv2D):
 # Function to load the model
 def load_model_func():
     model_path = 'keras_model.h5'  # or provide the absolute path
-    print(f"Trying to load model from: {model_path}")
-    
-    # Check if the model file exists
     if not os.path.isfile(model_path):
         raise FileNotFoundError(f"Model file not found: {model_path}")
     
     # Load the model with custom_objects
     model = load_model(model_path, custom_objects={'DepthwiseConv2D': CustomDepthwiseConv2D})
-    print("Model loaded successfully.")
     return model
 
 # Load the labels from the labels file
 def load_labels():
     labels_path = 'labels.txt'  # or provide the absolute path
-    print(f"Trying to load labels from: {labels_path}")
-
-    # Check if the labels file exists
     if not os.path.isfile(labels_path):
         raise FileNotFoundError(f"Labels file not found: {labels_path}")
 
     with open(labels_path, 'r') as file:
         labels = file.read().splitlines()
-    print("Labels loaded successfully.")
     return labels
 
 # Function to preprocess the uploaded image
@@ -55,23 +47,100 @@ def classify_image(model, labels, image_data):
     predicted_label = labels[np.argmax(predictions)]
     return predicted_label
 
+# Function to get recycling suggestions based on the predicted label
+def get_suggestions(predicted_label):
+    suggestions = {
+        "Plastic": [
+            "1. Recycle plastic containers by rinsing and placing them in recycling bins.",
+            "2. Consider using reusable bags instead of plastic ones.",
+            "3. Upcycle plastic bottles into planters or storage containers."
+        ],
+        "Metal": [
+            "1. Clean and recycle metal cans in your local recycling program.",
+            "2. Use metal containers for storage instead of plastic.",
+            "3. Donate old metal items instead of throwing them away."
+        ],
+        "Paper": [
+            "1. Recycle paper products like newspapers and cardboard.",
+            "2. Use both sides of paper before discarding.",
+            "3. Shred sensitive documents and recycle the scraps."
+        ],
+        "Glass": [
+            "1. Rinse glass jars and bottles before recycling them.",
+            "2. Consider using glass containers for food storage.",
+            "3. Repurpose glass jars as vases or decorative items."
+        ],
+        "Compost": [
+            "1. Compost kitchen scraps to create nutrient-rich soil.",
+            "2. Use compost bins or piles to reduce waste.",
+            "3. Educate others about the benefits of composting."
+        ],
+        "Cardboard": [
+            "1. Flatten cardboard boxes before recycling.",
+            "2. Reuse cardboard for crafts or storage.",
+            "3. Consider donating cardboard boxes to local schools or charities."
+        ]
+    }
+    return suggestions.get(predicted_label, ["No specific suggestions available."])
+
 # Show classification page
 def show_classification_page():
+    # Set background image and styles
+    st.markdown(
+        """
+        <style>
+        body {
+            background-image: url("https://png.pngtree.com/thumb_back/fh260/background/20220217/pngtree-green-simple-atmospheric-waste-classification-illustration-background-image_953325.jpg");
+            background-size: cover;
+            color: #333;
+            font-family: 'Arial', sans-serif;
+        }
+        .title {
+            text-align: center;
+            font-size: 2.5em;
+            color: #fff;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+        }
+        .button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.2em;
+            transition: background-color 0.3s ease;
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
+        .suggestion {
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 10px;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
     # Streamlit app layout
-    st.title("Waste Classification App")
+    st.markdown('<div class="title">Waste Classification App</div>', unsafe_allow_html=True)
     st.write("Upload an image of waste to classify it, or use your webcam.")
 
     # Load the model and labels when the app starts
-    model = None
-    labels = None
+    model, labels = None, None
 
     try:
         model = load_model_func()
+        st.success("Model loaded successfully!", icon="✅")
     except Exception as e:
         st.error(f"Error loading model: {e}")
 
     try:
         labels = load_labels()
+        st.success("Labels loaded successfully!", icon="✅")
     except Exception as e:
         st.error(f"Error loading labels: {e}")
 
@@ -87,7 +156,13 @@ def show_classification_page():
         image_data = preprocess_image(uploaded_file)
         if model and labels:
             predicted_label = classify_image(model, labels, image_data)
-            st.write(f"Predicted label: {predicted_label}")
+            st.write(f"Predicted label: **{predicted_label}**", unsafe_allow_html=True)
+
+            # Display recycling suggestions
+            suggestions = get_suggestions(predicted_label)
+            st.subheader("Recycling Suggestions:")
+            for suggestion in suggestions:
+                st.markdown(f'<div class="suggestion">{suggestion}</div>', unsafe_allow_html=True)
         else:
             st.error("Model or labels not available. Please check if they were loaded correctly.")
 
@@ -104,6 +179,16 @@ def show_classification_page():
         image_data = preprocess_image(camera_input)
         if model and labels:
             predicted_label = classify_image(model, labels, image_data)
-            st.write(f"Predicted label: {predicted_label}")
+            st.write(f"Predicted label: **{predicted_label}**", unsafe_allow_html=True)
+
+            # Display recycling suggestions
+            suggestions = get_suggestions(predicted_label)
+            st.subheader("Recycling Suggestions:")
+            for suggestion in suggestions:
+                st.markdown(f'<div class="suggestion">{suggestion}</div>', unsafe_allow_html=True)
         else:
             st.error("Model or labels not available. Please check if they were loaded correctly.")
+
+# Main application
+if __name__ == "__main__":
+    show_classification_page()
