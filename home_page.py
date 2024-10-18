@@ -104,7 +104,7 @@ def show_home_page():
     
     with col1:
         if st.button("Get Started", key="get_started"):
-            st.session_state.page = 'classification'
+            st.session_state.page = '🔍 Classification'
 
     with col2:
         if st.button("Learn More", key="learn_more"):
