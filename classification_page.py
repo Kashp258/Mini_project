@@ -118,7 +118,7 @@ def show_classification_page():
             background-color: #45a049;
         }
         .suggestion {
-            background-color: rgba(255, 255, 255, 0.8);
+            background-color: rgba(255, 255, 255, 0.5); /* Change background to semi-transparent white */
             border-radius: 8px;
             padding: 10px;
             margin-top: 10px;
@@ -140,13 +140,11 @@ def show_classification_page():
 
     try:
         model = load_model_func()
-        st.success("Model loaded successfully!", icon="✅")
     except Exception as e:
         st.error(f"Error loading model: {e}")
 
     try:
         labels = load_labels()
-        st.success("Labels loaded successfully!", icon="✅")
     except Exception as e:
         st.error(f"Error loading labels: {e}")
 
