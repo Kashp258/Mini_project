@@ -2,8 +2,6 @@ import streamlit as st
 from home_page import show_home_page
 from classification_page import show_classification_page
 from about_page import show_about_page
-from statistics_page import show_statistics_page  # Import the new statistics page
-from faq_page import show_faq_page              # Import the new FAQ page
 from contact_page import show_contact_page        # Import the new contact page
 from sustainability_page import show_sustainability_page  # Import the new sustainability page
 
@@ -41,10 +39,6 @@ def main():
         show_classification_page()
     elif page == "ℹ️ About":
         show_about_page()
-    elif page == "📊 Recycling Statistics":
-        show_statistics_page()  # Show the statistics page
-    elif page == "❓ FAQ":
-        show_faq_page()        # Show the FAQ page
     elif page == "✉️ Contact Us":
         show_contact_page()    # Show the contact page
     elif page == "🌱 Sustainability Practices":
