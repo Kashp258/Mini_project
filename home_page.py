@@ -132,21 +132,7 @@ def show_home_page():
     for title, description in feature_list:
         st.markdown(f"<div class='feature' onclick=\"alert('Feature: {title}')\"><div class='feature-title'>{title}</div><p>{description}</p></div>", unsafe_allow_html=True)
 
-    # Engaging Section with Statistics
-    st.subheader("Impact Statistics")
-    st.markdown("""
-    <div class='stats-container'>
-        <h3>Join the Movement!</h3>
-        <p>Over 1 million users have classified their waste with us!</p>
-        <p>Together, we have recycled:</p>
-        <ul style='list-style-type: none; padding: 0;'>
-            <li>🔄 <strong>500 tons</strong> of plastic waste</li>
-            <li>🔄 <strong>300 tons</strong> of paper waste</li>
-            <li>🔄 <strong>200 tons</strong> of glass waste</li>
-        </ul>
-    </div>
-    """, unsafe_allow_html=True)
-
+  
     # Footer
     st.markdown("<footer>Powered by Streamlit & Machine Learning</footer>", unsafe_allow_html=True)
 
