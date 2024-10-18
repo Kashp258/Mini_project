@@ -104,11 +104,17 @@ def show_home_page():
     
     with col1:
         if st.button("Get Started", key="get_started"):
-            st.session_state.page = '🔍 Classification'
+            st.markdown(
+                "<script>window.location.href = '/classification_page';</script>",
+                unsafe_allow_html=True
+            )
 
     with col2:
         if st.button("Learn More", key="learn_more"):
-            st.session_state.page = 'ℹ️ About'
+            st.markdown(
+                "<script>window.location.href = '/about_page';</script>",
+                unsafe_allow_html=True
+            )
 
     # Features Section
     st.subheader("Why Use This Application?")
