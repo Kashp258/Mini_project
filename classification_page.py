@@ -85,28 +85,24 @@ def get_suggestions(predicted_label):
 
 # Show classification page
 def show_classification_page():
-    # Set background image and styles
+    # Set styles with the specified colors
     st.markdown(
         """
         <style>
         body {
-            background-image: url("https://png.pngtree.com/thumb_back/fh260/background/20220217/pngtree-green-simple-atmospheric-waste-classification-illustration-background-image_953325.jpg");
-            background-size: cover;
-            background-attachment: fixed;
-            background-position: center;
-            background-repeat: no-repeat;
-            color: #333;
+            background-color: #EBF2B3; /* Light Green background */
+            color: #1B4001;  /* Dark Green text */
             font-family: 'Arial', sans-serif;
         }
         .title {
             text-align: center;
             font-size: 2.5em;
-            color: #fff;
+            color: #1B4001;  /* Dark Green */
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
         }
         .button {
-            background-color: #4CAF50;
-            color: white;
+            background-color: #3B7302; /* Medium Green */
+            color: #EBF2B3; /* Light Green */
             padding: 10px 20px;
             border: none;
             border-radius: 5px;
@@ -115,10 +111,10 @@ def show_classification_page():
             transition: background-color 0.3s ease;
         }
         .button:hover {
-            background-color: #45a049;
+            background-color: #65A603; /* Lighter Green */
         }
         .suggestion {
-            background-color: rgba(255, 255, 255, 0.8);
+            background-color: rgba(155, 191, 101, 0.8); /* Soft Green */
             border-radius: 8px;
             padding: 10px;
             margin-top: 10px;
