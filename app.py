@@ -50,6 +50,17 @@ def main():
     elif page == "🌱 Sustainability Practices":
         show_sustainability_page()  # Show the sustainability practices page
 
+    # Initialize session state if not set
+if "current_page" not in st.session_state:
+    st.session_state.current_page = "home_page"
+
+# Show the current page based on session state
+if st.session_state.current_page == "home_page":
+    show_home_page()
+elif st.session_state.current_page == "classification_page":
+    show_classification_page()
+elif st.session_state.current_page == "about_page":
+    show_about_page()
     
 if __name__ == "__main__":
     main()
