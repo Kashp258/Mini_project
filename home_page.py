@@ -1,4 +1,6 @@
 import streamlit as st
+from classification_page import show_classification_page
+from about_page import show_about_page
 
 # Background image URL
 background_image_url = "https://png.pngtree.com/thumb_back/fh260/background/20220217/pngtree-green-simple-atmospheric-waste-classification-illustration-background-image_953325.jpg"
