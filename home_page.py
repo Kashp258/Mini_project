@@ -108,7 +108,7 @@ def show_home_page():
 
     with col2:
         if st.button("Learn More", key="learn_more"):
-            st.session_state.page = 'about'
+            st.session_state.page = 'ℹ️ About'
 
     # Features Section
     st.subheader("Why Use This Application?")
