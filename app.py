@@ -13,23 +13,9 @@ def main():
     # Create radio buttons for navigation with icons
     page = st.sidebar.radio(
         "Go to:",
-        ("🏠 Home", "🔍 Classification", "ℹ️ About", "📊 Recycling Statistics", "❓ FAQ", "✉️ Contact Us", "🌱 Sustainability Practices"),
+        ("🏠 Home", "🔍 Classification", "ℹ️ About", "✉️ Contact Us", "🌱 Sustainability Practices"),
         index=0,  # Default selected page
         label_visibility="collapsed"  # Hide the label for a cleaner look
-    )
-
-    # Add descriptions for better user guidance
-    st.sidebar.markdown(
-        """
-        Navigate through the application using the options above.
-        - **Home:** Introduction to the Intelligent Waste Classification App.
-        - **Classification:** Upload an image and classify your waste.
-        - **About:** Learn more about the app and its development.
-        - **Recycling Statistics:** Learn about recycling and its impact on the environment.
-        - **FAQ:** Get answers to common questions about recycling and waste management.
-        - **Contact Us:** Reach out for more information or support.
-        - **Sustainability Practices:** Discover ways to live sustainably and reduce waste.
-        """
     )
 
     # Call the corresponding page function based on the selected option
