@@ -130,7 +130,10 @@ def show_classification_page():
 
     # Streamlit app layout
     st.markdown('<div class="title">Waste Classification App</div>', unsafe_allow_html=True)
-    st.write("Upload an image of waste to classify it, or use your webcam.")
+    st.write("Select an option to classify waste:")
+
+    # Add radio button for choosing the input method
+    option = st.radio("Choose input method:", ("Upload Image", "Use Webcam"))
 
     # Load the model and labels when the app starts
     model, labels = None, None
@@ -147,50 +150,52 @@ def show_classification_page():
     except Exception as e:
         st.error(f"Error loading labels: {e}")
 
-    # Image upload
-    uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
+    # Handle image upload
+    if option == "Upload Image":
+        uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
 
-    if uploaded_file is not None:
-        # Display uploaded image
-        st.image(uploaded_file, caption='Uploaded Image', use_column_width=True)
-        st.write("")
+        if uploaded_file is not None:
+            # Display uploaded image
+            st.image(uploaded_file, caption='Uploaded Image', use_column_width=True)
+            st.write("")
 
-        # Preprocess the image and make predictions using the model
-        image_data = preprocess_image(uploaded_file)
-        if model and labels:
-            predicted_label = classify_image(model, labels, image_data)
-            st.write(f"Predicted label: **{predicted_label}**", unsafe_allow_html=True)
+            # Preprocess the image and make predictions using the model
+            image_data = preprocess_image(uploaded_file)
+            if model and labels:
+                predicted_label = classify_image(model, labels, image_data)
+                st.write(f"Predicted label: **{predicted_label}**", unsafe_allow_html=True)
 
-            # Display recycling suggestions
-            suggestions = get_suggestions(predicted_label)
-            st.subheader("Recycling Suggestions:")
-            for suggestion in suggestions:
-                st.markdown(f'<div class="suggestion">{suggestion}</div>', unsafe_allow_html=True)
-        else:
-            st.error("Model or labels not available. Please check if they were loaded correctly.")
+                # Display recycling suggestions
+                suggestions = get_suggestions(predicted_label)
+                st.subheader("Recycling Suggestions:")
+                for suggestion in suggestions:
+                    st.markdown(f'<div class="suggestion">{suggestion}</div>', unsafe_allow_html=True)
+            else:
+                st.error("Model or labels not available. Please check if they were loaded correctly.")
 
-    # Webcam capture
-    st.write("### or use your webcam to classify waste")
-    camera_input = st.camera_input("Take a picture")
-    
-    if camera_input is not None:
-        # Display the captured image
-        st.image(camera_input, caption='Captured Image', use_column_width=True)
-        st.write("")
+    # Handle webcam capture
+    if option == "Use Webcam":
+        st.write("### Use your webcam to classify waste")
+        camera_input = st.camera_input("Take a picture")
+        
+        if camera_input is not None:
+            # Display the captured image
+            st.image(camera_input, caption='Captured Image', use_column_width=True)
+            st.write("")
 
-        # Preprocess the image and make predictions using the model
-        image_data = preprocess_image(camera_input)
-        if model and labels:
-            predicted_label = classify_image(model, labels, image_data)
-            st.write(f"Predicted label: **{predicted_label}**", unsafe_allow_html=True)
+            # Preprocess the image and make predictions using the model
+            image_data = preprocess_image(camera_input)
+            if model and labels:
+                predicted_label = classify_image(model, labels, image_data)
+                st.write(f"Predicted label: **{predicted_label}**", unsafe_allow_html=True)
 
-            # Display recycling suggestions
-            suggestions = get_suggestions(predicted_label)
-            st.subheader("Recycling Suggestions:")
-            for suggestion in suggestions:
-                st.markdown(f'<div class="suggestion">{suggestion}</div>', unsafe_allow_html=True)
-        else:
-            st.error("Model or labels not available. Please check if they were loaded correctly.")
+                # Display recycling suggestions
+                suggestions = get_suggestions(predicted_label)
+                st.subheader("Recycling Suggestions:")
+                for suggestion in suggestions:
+                    st.markdown(f'<div class="suggestion">{suggestion}</div>', unsafe_allow_html=True)
+            else:
+                st.error("Model or labels not available. Please check if they were loaded correctly.")
 
 # Main application
 if __name__ == "__main__":
