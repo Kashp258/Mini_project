@@ -95,9 +95,6 @@ def show_home_page():
     # Header
     st.markdown("<h1 class='header-title'>Welcome to the Intelligent Waste Classification App!</h1>", unsafe_allow_html=True)
     
-    # Add Hero Image
-    st.image("https://example.com/hero-image.jpg", use_column_width=True)
-
     # Introduction Section
     st.markdown("<p class='intro'>**This application helps you classify waste into different categories effortlessly.**</p>", unsafe_allow_html=True)
     st.markdown("<p class='intro'>Whether you are at home, at school, or in a business, understanding how to manage your waste is critical for a cleaner and greener environment.</p>", unsafe_allow_html=True)
@@ -107,17 +104,11 @@ def show_home_page():
     
     with col1:
         if st.button("Get Started", key="get_started"):
-            st.markdown(
-                "<script>window.location.href = '/?classification_page';</script>",
-                unsafe_allow_html=True
-            )
+            st.session_state.page = 'classification'
 
     with col2:
         if st.button("Learn More", key="learn_more"):
-            st.markdown(
-                "<script>window.location.href = '/?about_page';</script>",
-                unsafe_allow_html=True
-            )
+            st.session_state.page = 'about'
 
     # Features Section
     st.subheader("Why Use This Application?")
@@ -132,7 +123,5 @@ def show_home_page():
     for title, description in feature_list:
         st.markdown(f"<div class='feature' onclick=\"alert('Feature: {title}')\"><div class='feature-title'>{title}</div><p>{description}</p></div>", unsafe_allow_html=True)
 
-  
     # Footer
     st.markdown("<footer>Powered by Streamlit & Machine Learning</footer>", unsafe_allow_html=True)
-
