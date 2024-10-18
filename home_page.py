@@ -108,14 +108,14 @@ def show_home_page():
     with col1:
         if st.button("Get Started", key="get_started"):
             st.markdown(
-                "<script>window.location.href = '/?Classification';</script>",
+                "<script>window.location.href = '/?classification_page';</script>",
                 unsafe_allow_html=True
             )
 
     with col2:
         if st.button("Learn More", key="learn_more"):
             st.markdown(
-                "<script>window.location.href = '/?About';</script>",
+                "<script>window.location.href = '/?about_page';</script>",
                 unsafe_allow_html=True
             )
 
