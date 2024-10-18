@@ -110,6 +110,7 @@ def show_home_page():
                 "<script>window.location.href = '/classification_page';</script>",
                 unsafe_allow_html=True
             )
+            st.session_state.current_page = "classification_page"
 
     with col2:
         if st.button("Learn More", key="learn_more"):
@@ -117,6 +118,7 @@ def show_home_page():
                 "<script>window.location.href = '/about_page';</script>",
                 unsafe_allow_html=True
             )
+            st.session_state.current_page = "about_page"
 
     # Features Section
     st.subheader("Why Use This Application?")
