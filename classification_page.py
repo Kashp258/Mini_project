@@ -170,8 +170,8 @@ def show_classification_page():
 
         # Load the model and labels
         try:
-            model = load_model_func()
-            labels = load_labels()
+            model = 'keras_model.h5'
+            labels = 'labels.txt'
         except Exception as e:
             st.error(f"Error loading model or labels: {e}")
             return
