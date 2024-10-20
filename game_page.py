@@ -98,7 +98,7 @@ def show_animation(message):
 
 # Function to play sound effects (requires sound files to be available)
 def play_sound_effect():
-    sound_file = "path_to_sound_file.mp3"  # Replace with the path to your sound file
+    sound_file = "applause-cheer-236786.mp3"  # Replace with the path to your sound file
     if os.path.exists(sound_file):
         st.audio(sound_file)
     else:
