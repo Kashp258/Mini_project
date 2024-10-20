@@ -56,7 +56,7 @@ def get_openai_suggestions(predicted_label):
             {"role": "user", "content": f"Provide detailed recycling suggestions for '{predicted_label}' waste."}
         ]
     )
-    return response.choices[0].message['content']
+    return response['choices'][0]['message']['content']
 
 # Show classification page
 def show_classification_page():
