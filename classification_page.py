@@ -204,6 +204,15 @@ def show_classification_page():
     st.sidebar.markdown("## Waste Classification App")
     st.sidebar.write("This application helps you classify types of waste by analyzing images. Learn how you can better manage and recycle waste effectively.")
 
+    # Optional: Add a collapsible section in the sidebar for more tips
+    with st.sidebar.expander("📝 Recycling Tips"):
+        st.write("""
+            - Always rinse containers before recycling.
+            - Check local guidelines for specific recycling practices.
+            - Reduce waste by choosing reusable products.
+            - Educate friends and family about proper waste management.
+        """)
+
     # Footer with enhanced links
     st.markdown(
         "<div class='footer-links' style='text-align: center; padding-top: 30px;'>"
