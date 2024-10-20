@@ -6,10 +6,6 @@ from keras.models import load_model
 from keras.layers import DepthwiseConv2D
 from keras.preprocessing import image
 from keras.applications.mobilenet_v2 import preprocess_input
-import openai
-
-# Set OpenAI API key
-openai.api_key = 'sk-BYQMFg-N2DyzDY30VjaVQBvSFP-JKECI2VgDtvk9E8T3BlbkFJClEpe3ZZfvA6JQkLYQnsV976I6wt9V-EiCy9a_E2oA'  # Replace with your OpenAI API key
 
 # Custom DepthwiseConv2D class to handle loading without 'groups' argument
 class CustomDepthwiseConv2D(DepthwiseConv2D):
@@ -48,15 +44,41 @@ def classify_image(model, labels, image_data):
     predicted_label = labels[np.argmax(predictions)]
     return predicted_label
 
-# Function to get recycling suggestions from OpenAI
-def get_openai_suggestions(predicted_label):
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {"role": "user", "content": f"Provide detailed recycling suggestions for '{predicted_label}' waste."}
+# Function to get recycling suggestions based on the predicted label
+def get_suggestions(predicted_label):
+    suggestions = {
+        "Plastic": [
+            "Recycle plastic containers by rinsing and placing them in recycling bins.",
+            "Consider using reusable bags instead of plastic ones.",
+            "Upcycle plastic bottles into planters or storage containers."
+        ],
+        "Metal": [
+            "Clean and recycle metal cans in your local recycling program.",
+            "Use metal containers for storage instead of plastic.",
+            "Donate old metal items instead of throwing them away."
+        ],
+        "Paper": [
+            "Recycle paper products like newspapers and cardboard.",
+            "Use both sides of paper before discarding.",
+            "Shred sensitive documents and recycle the scraps."
+        ],
+        "Glass": [
+            "Rinse glass jars and bottles before recycling them.",
+            "Consider using glass containers for food storage.",
+            "Repurpose glass jars as vases or decorative items."
+        ],
+        "Compost": [
+            "Compost kitchen scraps to create nutrient-rich soil.",
+            "Use compost bins or piles to reduce waste.",
+            "Educate others about the benefits of composting."
+        ],
+        "Cardboard": [
+            "Flatten cardboard boxes before recycling.",
+            "Reuse cardboard for crafts or storage.",
+            "Consider donating cardboard boxes to local schools or charities."
         ]
-    )
-    return response['choices'][0]['message']['content']
+    }
+    return suggestions.get(predicted_label, ["No specific suggestions available."])
 
 # Show classification page
 def show_classification_page():
@@ -145,12 +167,10 @@ def show_classification_page():
             if model and labels:
                 predicted_label = classify_image(model, labels, image_data)
                 st.write(f"### Result: **{predicted_label}**")
-                
-                # Get recycling suggestions from OpenAI
-                suggestions = get_openai_suggestions(predicted_label)
+                suggestions = get_suggestions(predicted_label)
                 st.subheader("♻️ Recycling Suggestions:")
-                st.markdown(f'<div class="suggestion">{suggestions}</div>', unsafe_allow_html=True)
-
+                for suggestion in suggestions:
+                    st.markdown(f'<div class="suggestion">{suggestion}</div>', unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
 
     else:  # Image upload option
@@ -171,10 +191,11 @@ def show_classification_page():
                         predicted_label = classify_image(model, labels, image_data)
                         st.success(f"Predicted label: **{predicted_label}** 🎉")
                         
-                        # Get recycling suggestions from OpenAI
-                        suggestions = get_openai_suggestions(predicted_label)
+                        # Show recycling suggestions
+                        suggestions = get_suggestions(predicted_label)
                         st.subheader("♻️ Recycling Suggestions:")
-                        st.markdown(f'<div class="suggestion">{suggestions}</div>', unsafe_allow_html=True)
+                        for suggestion in suggestions:
+                            st.markdown(f'<div class="suggestion">{suggestion}</div>', unsafe_allow_html=True)
                     except Exception as e:
                         st.error(f"Error during classification: {e}")
             st.markdown('</div>', unsafe_allow_html=True)
