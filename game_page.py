@@ -1,12 +1,11 @@
-# game_page.py
-
 import streamlit as st
 import random
 import time
+import os
 
 # Function to show the gamification page
 def show_gamification_page():
-    # Initialize session state for user profile, points, badges, challenges, and achievements
+    # Initialize session state for user profile, points, badges, challenges, and milestones
     if 'username' not in st.session_state:
         st.session_state.username = ''
     if 'points' not in st.session_state:
@@ -100,7 +99,10 @@ def show_animation(message):
 # Function to play sound effects (requires sound files to be available)
 def play_sound_effect():
     sound_file = "path_to_sound_file.mp3"  # Replace with the path to your sound file
-    st.audio(sound_file)
+    if os.path.exists(sound_file):
+        st.audio(sound_file)
+    else:
+        st.warning(f"Sound file '{sound_file}' not found. Please check the path.")
 
 # Function to display milestones
 def display_milestones():
@@ -156,4 +158,5 @@ def reset_progress():
     st.success("Your progress has been reset! 🎮")
 
 # Call the function to show the gamification page
-show_gamification_page()
+if __name__ == "__main__":
+    show_gamification_page()
