@@ -4,5 +4,5 @@ numpy
 Pillow
 streamlit
 python-dotenv
-openai
+openai migrate
 opencv-python-headless
