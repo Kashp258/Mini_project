@@ -49,34 +49,34 @@ def classify_image(model, labels, image_data):
 def get_suggestions(predicted_label):
     suggestions = {
         "Plastic": [
-            "1. Recycle plastic containers by rinsing and placing them in recycling bins.",
-            "2. Consider using reusable bags instead of plastic ones.",
-            "3. Upcycle plastic bottles into planters or storage containers."
+            "Recycle plastic containers by rinsing and placing them in recycling bins.",
+            "Consider using reusable bags instead of plastic ones.",
+            "Upcycle plastic bottles into planters or storage containers."
         ],
         "Metal": [
-            "1. Clean and recycle metal cans in your local recycling program.",
-            "2. Use metal containers for storage instead of plastic.",
-            "3. Donate old metal items instead of throwing them away."
+            "Clean and recycle metal cans in your local recycling program.",
+            "Use metal containers for storage instead of plastic.",
+            "Donate old metal items instead of throwing them away."
         ],
         "Paper": [
-            "1. Recycle paper products like newspapers and cardboard.",
-            "2. Use both sides of paper before discarding.",
-            "3. Shred sensitive documents and recycle the scraps."
+            "Recycle paper products like newspapers and cardboard.",
+            "Use both sides of paper before discarding.",
+            "Shred sensitive documents and recycle the scraps."
         ],
         "Glass": [
-            "1. Rinse glass jars and bottles before recycling them.",
-            "2. Consider using glass containers for food storage.",
-            "3. Repurpose glass jars as vases or decorative items."
+            "Rinse glass jars and bottles before recycling them.",
+            "Consider using glass containers for food storage.",
+            "Repurpose glass jars as vases or decorative items."
         ],
         "Compost": [
-            "1. Compost kitchen scraps to create nutrient-rich soil.",
-            "2. Use compost bins or piles to reduce waste.",
-            "3. Educate others about the benefits of composting."
+            "Compost kitchen scraps to create nutrient-rich soil.",
+            "Use compost bins or piles to reduce waste.",
+            "Educate others about the benefits of composting."
         ],
         "Cardboard": [
-            "1. Flatten cardboard boxes before recycling.",
-            "2. Reuse cardboard for crafts or storage.",
-            "3. Consider donating cardboard boxes to local schools or charities."
+            "Flatten cardboard boxes before recycling.",
+            "Reuse cardboard for crafts or storage.",
+            "Consider donating cardboard boxes to local schools or charities."
         ]
     }
     return suggestions.get(predicted_label, ["No specific suggestions available."])
@@ -88,43 +88,54 @@ def show_classification_page():
         """
         <style>
         body {
-            background-color: #F0FFF0;  /* Light green background for freshness */
+            background-color: #F7FFF7; /* Light green for a refreshing look */
             font-family: 'Helvetica', sans-serif;
         }
         .title {
             text-align: center;
             font-size: 3.5em;
-            color: #228B22;  /* Bright green */
+            color: #2E8B57; /* Green shade for eco-friendliness */
             font-weight: 700;
             padding: 20px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
-        .upload-section, .suggestion {
+        .upload-section {
             background: #ffffff;
-            padding: 20px;
+            padding: 25px;
             border-radius: 15px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            margin: 15px 0;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            margin: 20px 0;
         }
-        .button {
-            background-color: #006400; /* Dark green */
+        .classify-button {
+            background-color: #228B22; /* Green color */
             color: #ffffff;
-            padding: 12px 25px;
+            padding: 12px 28px;
             font-size: 1.2em;
             border: none;
             border-radius: 8px;
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
-        .button:hover {
-            background-color: #32CD32; /* Bright green hover */
+        .classify-button:hover {
+            background-color: #32CD32; /* Bright green */
         }
         .suggestion {
-            margin-top: 20px;
+            margin-top: 15px;
             padding: 15px;
-            background-color: rgba(155, 191, 101, 0.8);
+            background-color: #e7f9e7;
             border-radius: 8px;
             font-size: 1.1em;
+            color: #006400;
+            box-shadow: 0 4px 6px rgba(0, 128, 0, 0.15);
+        }
+        .footer-links a {
+            color: #228B22;
+            font-size: 1.1em;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+        .footer-links a:hover {
+            text-decoration: underline;
         }
         </style>
         """,
@@ -138,34 +149,36 @@ def show_classification_page():
     # Upload section
     uploaded_file = st.file_uploader("Choose an image file...", type=["jpg", "jpeg", "png"])
 
-    model, labels = None, None
+    # Load the model and labels
     try:
         model = load_model_func()
         labels = load_labels()
     except Exception as e:
         st.error(f"Error loading model or labels: {e}")
+        return
 
-    # Handle image upload
+    # Handle image upload and classification
     if uploaded_file is not None:
         st.markdown('<div class="upload-section">', unsafe_allow_html=True)
         img = Image.open(uploaded_file)
         st.image(img, caption="Uploaded Image", use_column_width=True)
         st.write("### Result:")
 
+        # Add a classify button with interactivity
         if st.button("Classify Waste", key="classifyButton", help="Click to classify the waste image"):
             with st.spinner('Classifying... Please wait.'):
-                time.sleep(3)
-                if model and labels:
+                try:
                     image_data = preprocess_image(uploaded_file)
                     predicted_label = classify_image(model, labels, image_data)
-                    st.success(f"Predicted label: **{predicted_label}**")
+                    st.success(f"Predicted label: **{predicted_label}** 🎉")
+                    
+                    # Show recycling suggestions
                     suggestions = get_suggestions(predicted_label)
-                    st.subheader("Recycling Suggestions:")
+                    st.subheader("♻️ Recycling Suggestions:")
                     for suggestion in suggestions:
                         st.markdown(f'<div class="suggestion">{suggestion}</div>', unsafe_allow_html=True)
-                else:
-                    st.error("Model or labels not available. Please check.")
-
+                except Exception as e:
+                    st.error(f"Error during classification: {e}")
         st.markdown('</div>', unsafe_allow_html=True)
 
     # Enhanced sidebar
@@ -174,9 +187,9 @@ def show_classification_page():
 
     # Footer with enhanced links
     st.markdown(
-        "<div style='text-align: center; padding-top: 30px;'>"
-        "<a href='#' style='color: #32CD32; font-size: 1.1em; text-decoration: none;'>Learn More about Waste Management</a> | "
-        "<a href='#' style='color: #32CD32; font-size: 1.1em; text-decoration: none;'>Recycling Tips</a>"
+        "<div class='footer-links' style='text-align: center; padding-top: 30px;'>"
+        "<a href='#' style='font-weight:bold;'>Learn More about Waste Management</a> | "
+        "<a href='#' style='font-weight:bold;'>Recycling Tips</a>"
         "</div>",
         unsafe_allow_html=True
     )
