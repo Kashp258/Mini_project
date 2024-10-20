@@ -5,3 +5,4 @@ Pillow
 streamlit
 python-dotenv
 openai
+opencv-python
