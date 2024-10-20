@@ -1,11 +1,11 @@
 import streamlit as st
 import os
 import numpy as np
-from PIL import Image
 from keras.models import load_model
 from keras.layers import DepthwiseConv2D
 from keras.preprocessing import image
-from keras.applications.mobilenet_v2 import preprocess_input
+from keras.applications.mobilenet_v2 import preprocess_input  # Adjust according to your model
+from PIL import Image
 import time
 
 # Custom DepthwiseConv2D class to handle loading without 'groups' argument
@@ -16,27 +16,29 @@ class CustomDepthwiseConv2D(DepthwiseConv2D):
 
 # Function to load the model
 def load_model_func():
-    model_path = 'keras_model.h5'
+    model_path = 'keras_model.h5'  # or provide the absolute path
     if not os.path.isfile(model_path):
         raise FileNotFoundError(f"Model file not found: {model_path}")
+    
     model = load_model(model_path, custom_objects={'DepthwiseConv2D': CustomDepthwiseConv2D})
     return model
 
 # Load the labels from the labels file
 def load_labels():
-    labels_path = 'labels.txt'
+    labels_path = 'labels.txt'  # or provide the absolute path
     if not os.path.isfile(labels_path):
         raise FileNotFoundError(f"Labels file not found: {labels_path}")
+
     with open(labels_path, 'r') as file:
         labels = file.read().splitlines()
     return labels
 
 # Function to preprocess the uploaded image
-def preprocess_image(uploaded_file):
-    img = image.load_img(uploaded_file, target_size=(224, 224))
+def preprocess_image(img_file):
+    img = image.load_img(img_file, target_size=(224, 224))  # Adjust according to your model's input size
     img_array = image.img_to_array(img)
     img_array = np.expand_dims(img_array, axis=0)
-    img_array = preprocess_input(img_array)
+    img_array = preprocess_input(img_array)  # Preprocess for your model (e.g., MobileNetV2)
     return img_array
 
 # Function to classify an image
@@ -49,151 +51,128 @@ def classify_image(model, labels, image_data):
 def get_suggestions(predicted_label):
     suggestions = {
         "Plastic": [
-            "Recycle plastic containers by rinsing and placing them in recycling bins.",
-            "Consider using reusable bags instead of plastic ones.",
-            "Upcycle plastic bottles into planters or storage containers."
+            "1. Recycle plastic containers by rinsing and placing them in recycling bins.",
+            "2. Consider using reusable bags instead of plastic ones.",
+            "3. Upcycle plastic bottles into planters or storage containers."
         ],
         "Metal": [
-            "Clean and recycle metal cans in your local recycling program.",
-            "Use metal containers for storage instead of plastic.",
-            "Donate old metal items instead of throwing them away."
+            "1. Clean and recycle metal cans in your local recycling program.",
+            "2. Use metal containers for storage instead of plastic.",
+            "3. Donate old metal items instead of throwing them away."
         ],
         "Paper": [
-            "Recycle paper products like newspapers and cardboard.",
-            "Use both sides of paper before discarding.",
-            "Shred sensitive documents and recycle the scraps."
+            "1. Recycle paper products like newspapers and cardboard.",
+            "2. Use both sides of paper before discarding.",
+            "3. Shred sensitive documents and recycle the scraps."
         ],
         "Glass": [
-            "Rinse glass jars and bottles before recycling them.",
-            "Consider using glass containers for food storage.",
-            "Repurpose glass jars as vases or decorative items."
+            "1. Rinse glass jars and bottles before recycling them.",
+            "2. Consider using glass containers for food storage.",
+            "3. Repurpose glass jars as vases or decorative items."
         ],
         "Compost": [
-            "Compost kitchen scraps to create nutrient-rich soil.",
-            "Use compost bins or piles to reduce waste.",
-            "Educate others about the benefits of composting."
+            "1. Compost kitchen scraps to create nutrient-rich soil.",
+            "2. Use compost bins or piles to reduce waste.",
+            "3. Educate others about the benefits of composting."
         ],
         "Cardboard": [
-            "Flatten cardboard boxes before recycling.",
-            "Reuse cardboard for crafts or storage.",
-            "Consider donating cardboard boxes to local schools or charities."
+            "1. Flatten cardboard boxes before recycling.",
+            "2. Reuse cardboard for crafts or storage.",
+            "3. Consider donating cardboard boxes to local schools or charities."
         ]
     }
     return suggestions.get(predicted_label, ["No specific suggestions available."])
 
 # Show classification page
 def show_classification_page():
-    # Set up the enhanced page style
     st.markdown(
         """
         <style>
         body {
-            background-color: #F7FFF7; /* Light green for a refreshing look */
-            font-family: 'Helvetica', sans-serif;
+            background-color: #EBF2B3; /* Light Green background */
+            color: #1B4001;  /* Dark Green text */
+            font-family: 'Arial', sans-serif;
         }
         .title {
             text-align: center;
-            font-size: 3.5em;
-            color: #2E8B57; /* Green shade for eco-friendliness */
-            font-weight: 700;
-            padding: 20px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            font-size: 3em;
+            color: #1B4001;  /* Dark Green */
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+            padding: 15px 0;
         }
-        .upload-section {
-            background: #ffffff;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-            margin: 20px 0;
-        }
-        .classify-button {
-            background-color: #228B22; /* Green color */
-            color: #ffffff;
-            padding: 12px 28px;
-            font-size: 1.2em;
+        .button {
+            background-color: #3B7302; /* Medium Dark Green */
+            color: #EBF2B3; /* Light Green */
+            padding: 10px 20px;
             border: none;
-            border-radius: 8px;
+            border-radius: 5px;
             cursor: pointer;
+            font-size: 1.2em;
             transition: background-color 0.3s ease;
         }
-        .classify-button:hover {
-            background-color: #32CD32; /* Bright green */
+        .button:hover {
+            background-color: #65A603; /* Bright Green */
         }
         .suggestion {
-            margin-top: 15px;
-            padding: 15px;
-            background-color: #e7f9e7;
+            background-color: rgba(155, 191, 101, 0.8); /* Soft Green */
             border-radius: 8px;
-            font-size: 1.1em;
-            color: #006400;
-            box-shadow: 0 4px 6px rgba(0, 128, 0, 0.15);
+            padding: 15px;
+            margin-top: 10px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
         }
-        .footer-links a {
-            color: #228B22;
-            font-size: 1.1em;
-            text-decoration: none;
-            margin: 0 10px;
-        }
-        .footer-links a:hover {
-            text-decoration: underline;
+        .upload-section, .camera-section {
+            background-color: #F5F8E6; /* Very Light Green */
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
         }
         </style>
         """,
         unsafe_allow_html=True
     )
 
-    # Display enhanced title
-    st.markdown('<div class="title">Waste Classification App 🌱</div>', unsafe_allow_html=True)
-    st.write("### Upload an image to classify the type of waste")
+    st.markdown('<div class="title">Waste Classification App 🌎</div>', unsafe_allow_html=True)
 
-    # Upload section
-    uploaded_file = st.file_uploader("Choose an image file...", type=["jpg", "jpeg", "png"])
+    option = st.radio("Choose input method:", ("Upload Image", "Use Webcam"))
 
-    # Load the model and labels
+    model, labels = None, None
     try:
         model = load_model_func()
         labels = load_labels()
     except Exception as e:
-        st.error(f"Error loading model or labels: {e}")
-        return
+        st.error(f"Error loading resources: {e}")
 
-    # Handle image upload and classification
-    if uploaded_file is not None:
-        st.markdown('<div class="upload-section">', unsafe_allow_html=True)
-        img = Image.open(uploaded_file)
-        st.image(img, caption="Uploaded Image", use_column_width=True)
-        st.write("### Result:")
+    if option == "Upload Image":
+        st.markdown("<div class='upload-section'>", unsafe_allow_html=True)
+        uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
+        if uploaded_file is not None:
+            st.image(uploaded_file, caption='Uploaded Image', use_column_width=True)
+            image_data = preprocess_image(uploaded_file)
+            if model and labels:
+                predicted_label = classify_image(model, labels, image_data)
+                st.write(f"### Result: **{predicted_label}**")
+                suggestions = get_suggestions(predicted_label)
+                st.subheader("Recycling Suggestions:")
+                for suggestion in suggestions:
+                    st.markdown(f'<div class="suggestion">{suggestion}</div>', unsafe_allow_html=True)
+        st.markdown("</div>", unsafe_allow_html=True)
 
-        # Add a classify button with interactivity
-        if st.button("Classify Waste", key="classifyButton", help="Click to classify the waste image"):
-            with st.spinner('Classifying... Please wait.'):
-                try:
-                    image_data = preprocess_image(uploaded_file)
-                    predicted_label = classify_image(model, labels, image_data)
-                    st.success(f"Predicted label: **{predicted_label}** 🎉")
-                    
-                    # Show recycling suggestions
-                    suggestions = get_suggestions(predicted_label)
-                    st.subheader("♻️ Recycling Suggestions:")
-                    for suggestion in suggestions:
-                        st.markdown(f'<div class="suggestion">{suggestion}</div>', unsafe_allow_html=True)
-                except Exception as e:
-                    st.error(f"Error during classification: {e}")
-        st.markdown('</div>', unsafe_allow_html=True)
+    if option == "Use Webcam":
+        st.markdown("<div class='camera-section'>", unsafe_allow_html=True)
+        st.write("### Capture an Image Using Your Webcam")
+        camera_input = st.camera_input("Take a picture")
+        if camera_input is not None:
+            img = Image.open(camera_input)
+            st.image(img, caption='Captured Image', use_column_width=True)
+            image_data = preprocess_image(camera_input)
+            if model and labels:
+                predicted_label = classify_image(model, labels, image_data)
+                st.write(f"### Result: **{predicted_label}**")
+                suggestions = get_suggestions(predicted_label)
+                st.subheader("Recycling Suggestions:")
+                for suggestion in suggestions:
+                    st.markdown(f'<div class="suggestion">{suggestion}</div>', unsafe_allow_html=True)
+        st.markdown("</div>", unsafe_allow_html=True)
 
-    # Enhanced sidebar
-    st.sidebar.markdown("## Waste Classification App")
-    st.sidebar.write("This application helps you classify types of waste by analyzing images. Learn how you can better manage and recycle waste effectively.")
-
-    # Footer with enhanced links
-    st.markdown(
-        "<div class='footer-links' style='text-align: center; padding-top: 30px;'>"
-        "<a href='#' style='font-weight:bold;'>Learn More about Waste Management</a> | "
-        "<a href='#' style='font-weight:bold;'>Recycling Tips</a>"
-        "</div>",
-        unsafe_allow_html=True
-    )
-
-# Main application
 if __name__ == "__main__":
     show_classification_page()
