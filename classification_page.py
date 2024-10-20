@@ -82,6 +82,14 @@ def get_suggestions(predicted_label):
 
 # Show classification page
 def show_classification_page():
+    # Load the model and labels
+    try:
+        model = load_model_func()
+        labels = load_labels()
+    except Exception as e:
+        st.error(f"Error loading model or labels: {e}")
+        return
+
     # Set up the enhanced page style
     st.markdown(
         """
@@ -167,14 +175,6 @@ def show_classification_page():
 
     else:  # Image upload option
         uploaded_file = st.file_uploader("Choose an image file...", type=["jpg", "jpeg", "png"])
-
-        # Load the model and labels
-        try:
-            model = 'keras_model.h5'
-            labels = 'labels.txt'
-        except Exception as e:
-            st.error(f"Error loading model or labels: {e}")
-            return
 
         # Handle image upload and classification
         if uploaded_file is not None:
