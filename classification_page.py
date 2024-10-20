@@ -15,7 +15,7 @@ class CustomDepthwiseConv2D(DepthwiseConv2D):
 
 # Function to load the model
 def load_model_func():
-    model_path = 'waste_classification.h5'  # or provide the absolute path
+    model_path = 'keras_model.h5'  # or provide the absolute path
     if not os.path.isfile(model_path):
         raise FileNotFoundError(f"Model file not found: {model_path}")
     
@@ -101,7 +101,7 @@ def show_classification_page():
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
         }
         .button {
-            background-color: #3B7302; /* Medium Green */
+            background-color: #3B7302; /* Medium Dark Green */
             color: #EBF2B3; /* Light Green */
             padding: 10px 20px;
             border: none;
@@ -111,7 +111,7 @@ def show_classification_page():
             transition: background-color 0.3s ease;
         }
         .button:hover {
-            background-color: #65A603; /* Lighter Green */
+            background-color: #65A603; /* Bright Green */
         }
         .suggestion {
             background-color: rgba(155, 191, 101, 0.8); /* Soft Green */
