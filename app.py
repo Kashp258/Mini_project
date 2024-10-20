@@ -30,7 +30,7 @@ def main():
         show_contact_page()    # Show the contact page
     elif page == "🌱 Sustainability Practices":
         show_sustainability_page()  # Show the sustainability practices page
-     elif page == "Gamification":
+    elif page == "Gamification":
         show_gamification_page()  # Call the gamification page function
 
     
