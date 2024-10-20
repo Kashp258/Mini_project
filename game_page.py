@@ -1,11 +1,10 @@
 import streamlit as st
 import random
 import time
-import os
 
 # Function to show the gamification page
 def show_gamification_page():
-    # Initialize session state for user profile, points, badges, challenges, and milestones
+    # Initialize session state for user profile, points, badges, challenges, and achievements
     if 'username' not in st.session_state:
         st.session_state.username = ''
     if 'points' not in st.session_state:
@@ -21,15 +20,17 @@ def show_gamification_page():
         }
     if 'milestones' not in st.session_state:
         st.session_state.milestones = []
+    if 'leaderboard' not in st.session_state:
+        st.session_state.leaderboard = {}
 
-    st.title("Gamification Feature 🎮")
+    st.title("🎮 Gamification Feature")
     st.write("Welcome to the Gamification Page! Earn points and badges by completing challenges.")
 
     # User profile input
     if st.session_state.username == '':
         st.session_state.username = st.text_input("Enter your username to start:", "")
         if st.session_state.username:
-            st.success(f"Welcome, {st.session_state.username}! Let's start earning points!")
+            st.success(f"Welcome, {st.session_state.username}! Let's start earning points! 🎉")
     else:
         st.write(f"**User:** {st.session_state.username}")
 
@@ -85,8 +86,7 @@ def complete_challenge(challenge_type):
         show_animation(f"Congratulations on completing '{challenge_type}'!")
 
         check_milestone()
-    else:
-        st.warning("Please select a valid challenge.")
+        update_leaderboard()
 
 # Function to show a simple animation for completion
 def show_animation(message):
@@ -98,11 +98,11 @@ def show_animation(message):
 
 # Function to play sound effects (requires sound files to be available)
 def play_sound_effect():
-    sound_file = "applause-cheer-236786.mp3"  # Replace with the path to your sound file
-    if os.path.exists(sound_file):
+    sound_file = "path_to_sound_file.mp3"  # Replace with the path to your sound file
+    try:
         st.audio(sound_file)
-    else:
-        st.warning(f"Sound file '{sound_file}' not found. Please check the path.")
+    except Exception as e:
+        st.error(f"Error playing sound: {e}")
 
 # Function to display milestones
 def display_milestones():
@@ -127,9 +127,8 @@ def check_milestone():
 
 # Function to display leaderboard
 def display_leaderboard():
-    leaderboard = st.session_state.get('leaderboard', {})
-    if leaderboard:
-        sorted_leaderboard = sorted(leaderboard.items(), key=lambda x: x[1], reverse=True)
+    if st.session_state.leaderboard:
+        sorted_leaderboard = sorted(st.session_state.leaderboard.items(), key=lambda x: x[1], reverse=True)
         st.write("### Top Players:")
         for user, points in sorted_leaderboard:
             st.markdown(f"- **{user}**: {points} points")
@@ -139,9 +138,7 @@ def display_leaderboard():
 # Function to update the leaderboard
 def update_leaderboard():
     username = st.session_state.username
-    leaderboard = st.session_state.get('leaderboard', {})
-    leaderboard[username] = st.session_state.points
-    st.session_state.leaderboard = leaderboard
+    st.session_state.leaderboard[username] = st.session_state.points
 
 # Function to reset points and badges
 def reset_progress():
