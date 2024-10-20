@@ -3,7 +3,8 @@ from home_page import show_home_page
 from classification_page import show_classification_page
 from about_page import show_about_page
 from contact_page import show_contact_page        # Import the new contact page
-from sustainability_page import show_sustainability_page  # Import the new sustainability page
+from sustainability_page import show_sustainability_page
+from game_page import show_gamification_page # Import the new sustainability page
 
 # Main function to navigate through the pages
 def main():
@@ -13,7 +14,7 @@ def main():
     # Create radio buttons for navigation with icons
     page = st.sidebar.radio(
         "Go to:",
-        ("🏠 Home", "🔍 Classification", "ℹ️ About", "✉️ Contact Us", "🌱 Sustainability Practices"),
+        ("🏠 Home", "🔍 Classification", "ℹ️ About", "✉️ Contact Us", "🌱 Sustainability Practices","Gamification"),
         index=0,  # Default selected page
         label_visibility="collapsed"  # Hide the label for a cleaner look
     )
@@ -29,6 +30,8 @@ def main():
         show_contact_page()    # Show the contact page
     elif page == "🌱 Sustainability Practices":
         show_sustainability_page()  # Show the sustainability practices page
+     elif page == "Gamification":
+        show_gamification_page()  # Call the gamification page function
 
     
 if __name__ == "__main__":
