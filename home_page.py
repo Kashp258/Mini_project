@@ -1,16 +1,24 @@
 import streamlit as st
+from PIL import Image
+import base64
 from classification_page import show_classification_page
 from about_page import show_about_page
 
-# Background image URL
-background_image_url = "green_bg_image.png"
+# Load the background image
+def get_base64_of_img(img):
+    with open(img, "rb") as f:
+        return base64.b64encode(f.read()).decode()
+
+# Background image path
+background_image_path = "green_bg_image.png"
+background_image_base64 = get_base64_of_img(background_image_path)
 
 def show_home_page():
     # Custom CSS for better aesthetics and background image
     st.markdown(f"""
     <style>
         .stApp {{
-            background-image: url("{background_image_url}");
+            background-image: url("data:image/png;base64,{background_image_base64}");
             background-size: cover;
             background-repeat: no-repeat;
             background-attachment: fixed;
@@ -101,7 +109,6 @@ def show_home_page():
     st.markdown("<p class='intro'>**This application helps you classify waste into different categories effortlessly.**</p>", unsafe_allow_html=True)
     st.markdown("<p class='intro'>Whether you are at home, at school, or in a business, understanding how to manage your waste is critical for a cleaner and greener environment.</p>", unsafe_allow_html=True)
 
-
     # Features Section
     st.subheader("Why Use This Application?")
     
@@ -117,3 +124,7 @@ def show_home_page():
 
     # Footer
     st.markdown("<footer>Powered by Streamlit & Machine Learning</footer>", unsafe_allow_html=True)
+
+# Call the function to show the home page
+if __name__ == "__main__":
+    show_home_page()
