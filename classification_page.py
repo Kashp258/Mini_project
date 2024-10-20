@@ -1,17 +1,18 @@
 import streamlit as st
+from PIL import Image
+import time
 import os
 import numpy as np
 from keras.models import load_model
 from keras.layers import DepthwiseConv2D
 from keras.preprocessing import image
 from keras.applications.mobilenet_v2 import preprocess_input  # Adjust according to your model
-from PIL import Image
-import time
 
 # Custom DepthwiseConv2D class to handle loading without 'groups' argument
 class CustomDepthwiseConv2D(DepthwiseConv2D):
     def __init__(self, *args, **kwargs):
-        kwargs.pop('groups', None)  # Remove unsupported 'groups' argument if present
+        # Remove unsupported 'groups' argument if present
+        kwargs.pop('groups', None)
         super().__init__(*args, **kwargs)
 
 # Function to load the model
@@ -19,6 +20,8 @@ def load_model_func():
     model_path = 'keras_model.h5'  # or provide the absolute path
     if not os.path.isfile(model_path):
         raise FileNotFoundError(f"Model file not found: {model_path}")
+    
+    # Load the model with custom_objects
     model = load_model(model_path, custom_objects={'DepthwiseConv2D': CustomDepthwiseConv2D})
     return model
 
@@ -27,6 +30,7 @@ def load_labels():
     labels_path = 'labels.txt'  # or provide the absolute path
     if not os.path.isfile(labels_path):
         raise FileNotFoundError(f"Labels file not found: {labels_path}")
+
     with open(labels_path, 'r') as file:
         labels = file.read().splitlines()
     return labels
@@ -83,60 +87,47 @@ def get_suggestions(predicted_label):
 
 # Show classification page
 def show_classification_page():
-    # Set the color palette
-    DARK_GREEN = "#1B4001"
-    MID_GREEN = "#3B7302"
-    BRIGHT_GREEN = "#65A603"
-    LIGHT_GREEN = "#9BBF65"
-    SOFT_YELLOW = "#EBF2B3"
-    
-    # Customize the page style
+    # Set styles with the specified colors
     st.markdown(
-        f"""
+        """
         <style>
-        body {{
-            background-color: {SOFT_YELLOW};
-        }}
-        .sidebar .sidebar-content {{
-            background-color: {LIGHT_GREEN};
-        }}
-        .stButton>button {{
-            background-color: {MID_GREEN};
-            color: white;
-            font-size: 16px;
-            border: 1px solid {DARK_GREEN};
-            border-radius: 8px;
-            transition: background-color 0.3s ease;
-            padding: 10px 20px;
-        }}
-        .stButton>button:hover {{
-            background-color: {DARK_GREEN};
-        }}
-        .title h1 {{
-            font-size: 40px;
-            color: {BRIGHT_GREEN};
-            font-weight: bold;
+        body {
+            background-color: #EBF2B3; /* Light Green background */
+            color: #1B4001;  /* Dark Green text */
+            font-family: 'Arial', sans-serif;
+        }
+        .title {
             text-align: center;
-            padding-top: 10px;
-        }}
-        .upload-success {{
-            color: {MID_GREEN};
-            font-weight: bold;
-            font-size: 20px;
-        }}
-        .content-section {{
-            background-color: {LIGHT_GREEN};
-            padding: 20px;
-            border-radius: 15px;
-            margin-top: 20px;
-        }}
+            font-size: 2.5em;
+            color: #1B4001;  /* Dark Green */
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+        }
+        .button {
+            background-color: #3B7302; /* Medium Dark Green */
+            color: #EBF2B3; /* Light Green */
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.2em;
+            transition: background-color 0.3s ease;
+        }
+        .button:hover {
+            background-color: #65A603; /* Bright Green */
+        }
+        .suggestion {
+            background-color: rgba(155, 191, 101, 0.8); /* Soft Green */
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 10px;
+        }
         </style>
         """,
-        unsafe_allow_html=True,
+        unsafe_allow_html=True
     )
 
     # Streamlit app layout
-    st.markdown('<div class="title"><h1>Waste Classification App</h1></div>', unsafe_allow_html=True)
+    st.markdown('<div class="title">Waste Classification App</div>', unsafe_allow_html=True)
     st.write("Select an option to classify waste:")
 
     # Add radio button for choosing the input method
@@ -144,6 +135,7 @@ def show_classification_page():
 
     # Load the model and labels when the app starts
     model, labels = None, None
+
     try:
         model = load_model_func()
     except Exception as e:
@@ -161,20 +153,22 @@ def show_classification_page():
         if uploaded_file is not None:
             # Display uploaded image and notify user
             img = Image.open(uploaded_file)
-            st.image(img, caption='Uploaded Image', use_column_width=True)
-            st.toast("Image uploaded successfully! 🎉", icon="✅", duration=3)
-
+            st.image(img, caption="Uploaded Image", use_column_width=True)
+            st.success("Image uploaded successfully! 🎉")  # Notify user
+            
             # Preprocess the image and make predictions using the model
             image_data = preprocess_image(uploaded_file)
             if model and labels:
                 predicted_label = classify_image(model, labels, image_data)
-                st.write(f"Classification Result: **{predicted_label}**")
+                st.write(f"Predicted label: **{predicted_label}**", unsafe_allow_html=True)
 
                 # Display recycling suggestions
                 suggestions = get_suggestions(predicted_label)
                 st.subheader("Recycling Suggestions:")
                 for suggestion in suggestions:
                     st.markdown(f'<div class="suggestion">{suggestion}</div>', unsafe_allow_html=True)
+            else:
+                st.error("Model or labels not available. Please check if they were loaded correctly.")
 
     # Handle webcam capture
     if option == "Use Webcam":
@@ -182,17 +176,23 @@ def show_classification_page():
         camera_input = st.camera_input("Take a picture")
         
         if camera_input is not None:
+            # Display the captured image
             st.image(camera_input, caption='Captured Image', use_column_width=True)
+            st.write("")
+
+            # Preprocess the image and make predictions using the model
             image_data = preprocess_image(camera_input)
             if model and labels:
                 predicted_label = classify_image(model, labels, image_data)
-                st.write(f"Classification Result: **{predicted_label}**")
+                st.write(f"Predicted label: **{predicted_label}**", unsafe_allow_html=True)
 
                 # Display recycling suggestions
                 suggestions = get_suggestions(predicted_label)
                 st.subheader("Recycling Suggestions:")
                 for suggestion in suggestions:
                     st.markdown(f'<div class="suggestion">{suggestion}</div>', unsafe_allow_html=True)
+            else:
+                st.error("Model or labels not available. Please check if they were loaded correctly.")
 
 # Main application
 if __name__ == "__main__":
