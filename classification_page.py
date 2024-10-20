@@ -6,8 +6,6 @@ from keras.models import load_model
 from keras.layers import DepthwiseConv2D
 from keras.preprocessing import image
 from keras.applications.mobilenet_v2 import preprocess_input
-import cv2
-import tempfile
 
 # Custom DepthwiseConv2D class to handle loading without 'groups' argument
 class CustomDepthwiseConv2D(DepthwiseConv2D):
@@ -145,73 +143,54 @@ def show_classification_page():
 
     # Display enhanced title
     st.markdown('<div class="title">Waste Classification App 🌱</div>', unsafe_allow_html=True)
-    st.write("### Upload an image to classify the type of waste or use your webcam")
+    st.write("### Capture an image using your webcam or upload an image file to classify the type of waste")
 
-    # Upload section
-    uploaded_file = st.file_uploader("Choose an image file...", type=["jpg", "jpeg", "png"])
+    # Webcam option
+    option = st.selectbox("Choose an option:", ("Upload Image", "Use Webcam"))
 
-    # Load the model and labels
-    try:
-        model = load_model_func()
-        labels = load_labels()
-    except Exception as e:
-        st.error(f"Error loading model or labels: {e}")
-        return
+    if option == "Use Webcam":
+        st.markdown("<div class='camera-section'>", unsafe_allow_html=True)
+        st.write("### Capture an Image Using Your Webcam")
+        camera_input = st.camera_input("Take a picture")
+        if camera_input is not None:
+            img = Image.open(camera_input)
+            st.image(img, caption='Captured Image', use_column_width=True)
+            image_data = preprocess_image(camera_input)
+            if model and labels:
+                predicted_label = classify_image(model, labels, image_data)
+                st.write(f"### Result: **{predicted_label}**")
+                suggestions = get_suggestions(predicted_label)
+                st.subheader("♻️ Recycling Suggestions:")
+                for suggestion in suggestions:
+                    st.markdown(f'<div class="suggestion">{suggestion}</div>', unsafe_allow_html=True)
+        st.markdown("</div>", unsafe_allow_html=True)
 
-    # Handle image upload and classification
-    if uploaded_file is not None:
-        st.markdown('<div class="upload-section">', unsafe_allow_html=True)
-        img = Image.open(uploaded_file)
-        st.image(img, caption="Uploaded Image", use_column_width=True)
-        st.write("### Result:")
+    else:  # Image upload option
+        uploaded_file = st.file_uploader("Choose an image file...", type=["jpg", "jpeg", "png"])
 
-        # Add a classify button with interactivity
-        if st.button("Classify Waste", key="classifyButton", help="Click to classify the waste image"):
-            with st.spinner('Classifying... Please wait.'):
-                try:
-                    image_data = preprocess_image(uploaded_file)
-                    predicted_label = classify_image(model, labels, image_data)
-                    st.success(f"Predicted label: **{predicted_label}** 🎉")
-                    
-                    # Show recycling suggestions
-                    suggestions = get_suggestions(predicted_label)
-                    st.subheader("♻️ Recycling Suggestions:")
-                    for suggestion in suggestions:
-                        st.markdown(f'<div class="suggestion">{suggestion}</div>', unsafe_allow_html=True)
-                except Exception as e:
-                    st.error(f"Error during classification: {e}")
-        st.markdown('</div>', unsafe_allow_html=True)
-
-    # Webcam section
-    st.write("### Or use your webcam for real-time classification:")
-    if st.button("Capture Image from Webcam"):
-        # Capture image using OpenCV
-        cap = cv2.VideoCapture(0)
-        if not cap.isOpened():
-            st.error("Error: Could not open webcam.")
+        # Load the model and labels
+        try:
+            model = load_model_func()
+            labels = load_labels()
+        except Exception as e:
+            st.error(f"Error loading model or labels: {e}")
             return
 
-        # Capture a single frame
-        ret, frame = cap.read()
-        if ret:
-            # Save the captured frame to a temporary file
-            with tempfile.NamedTemporaryFile(delete=False, suffix='.jpg') as temp_file:
-                temp_file.write(cv2.imencode('.jpg', frame)[1].tobytes())
-                temp_file_path = temp_file.name
-            
-            # Display the captured image
-            img = Image.open(temp_file_path)
-            st.image(img, caption="Captured Image", use_column_width=True)
+        # Handle image upload and classification
+        if uploaded_file is not None:
+            st.markdown('<div class="upload-section">', unsafe_allow_html=True)
+            img = Image.open(uploaded_file)
+            st.image(img, caption="Uploaded Image", use_column_width=True)
             st.write("### Result:")
 
-            # Classify the captured image
-            if st.button("Classify Waste from Webcam", key="webcamClassify"):
+            # Add a classify button with interactivity
+            if st.button("Classify Waste", key="classifyButton", help="Click to classify the waste image"):
                 with st.spinner('Classifying... Please wait.'):
                     try:
-                        image_data = preprocess_image(temp_file_path)
+                        image_data = preprocess_image(uploaded_file)
                         predicted_label = classify_image(model, labels, image_data)
                         st.success(f"Predicted label: **{predicted_label}** 🎉")
-
+                        
                         # Show recycling suggestions
                         suggestions = get_suggestions(predicted_label)
                         st.subheader("♻️ Recycling Suggestions:")
@@ -219,9 +198,7 @@ def show_classification_page():
                             st.markdown(f'<div class="suggestion">{suggestion}</div>', unsafe_allow_html=True)
                     except Exception as e:
                         st.error(f"Error during classification: {e}")
-
-        # Release the webcam
-        cap.release()
+            st.markdown('</div>', unsafe_allow_html=True)
 
     # Enhanced sidebar
     st.sidebar.markdown("## Waste Classification App")
@@ -238,5 +215,4 @@ def show_classification_page():
 
 # Main application
 if __name__ == "__main__":
-    st.title("Waste Classification App")
     show_classification_page()
