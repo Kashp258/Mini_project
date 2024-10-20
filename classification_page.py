@@ -6,8 +6,8 @@ from keras.models import load_model
 from keras.layers import DepthwiseConv2D
 from keras.preprocessing import image
 from keras.applications.mobilenet_v2 import preprocess_input
-import time
-from streamlit_webrtc import VideoTransformerBase, webrtc_streamer
+import cv2
+import tempfile
 
 # Custom DepthwiseConv2D class to handle loading without 'groups' argument
 class CustomDepthwiseConv2D(DepthwiseConv2D):
@@ -81,28 +81,6 @@ def get_suggestions(predicted_label):
         ]
     }
     return suggestions.get(predicted_label, ["No specific suggestions available."])
-
-# Webcam transformer class
-class VideoTransformer(VideoTransformerBase):
-    def __init__(self, model, labels):
-        self.model = model
-        self.labels = labels
-
-    def transform(self, frame):
-        img = frame.to_ndarray()
-        img_resized = np.resize(img, (224, 224, 3))  # Resize to model input shape
-        img_array = np.expand_dims(img_resized, axis=0)
-        img_array = preprocess_input(img_array)
-        
-        # Perform classification
-        predictions = self.model.predict(img_array)
-        predicted_label = self.labels[np.argmax(predictions)]
-        
-        # Draw the label on the frame
-        label_text = f"Predicted: {predicted_label}"
-        cv2.putText(img, label_text, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
-
-        return img
 
 # Show classification page
 def show_classification_page():
@@ -206,7 +184,44 @@ def show_classification_page():
 
     # Webcam section
     st.write("### Or use your webcam for real-time classification:")
-    webrtc_streamer(key="example", video_transformer_factory=lambda: VideoTransformer(model, labels), width=640, height=480)
+    if st.button("Capture Image from Webcam"):
+        # Capture image using OpenCV
+        cap = cv2.VideoCapture(0)
+        if not cap.isOpened():
+            st.error("Error: Could not open webcam.")
+            return
+
+        # Capture a single frame
+        ret, frame = cap.read()
+        if ret:
+            # Save the captured frame to a temporary file
+            with tempfile.NamedTemporaryFile(delete=False, suffix='.jpg') as temp_file:
+                temp_file.write(cv2.imencode('.jpg', frame)[1].tobytes())
+                temp_file_path = temp_file.name
+            
+            # Display the captured image
+            img = Image.open(temp_file_path)
+            st.image(img, caption="Captured Image", use_column_width=True)
+            st.write("### Result:")
+
+            # Classify the captured image
+            if st.button("Classify Waste from Webcam", key="webcamClassify"):
+                with st.spinner('Classifying... Please wait.'):
+                    try:
+                        image_data = preprocess_image(temp_file_path)
+                        predicted_label = classify_image(model, labels, image_data)
+                        st.success(f"Predicted label: **{predicted_label}** 🎉")
+
+                        # Show recycling suggestions
+                        suggestions = get_suggestions(predicted_label)
+                        st.subheader("♻️ Recycling Suggestions:")
+                        for suggestion in suggestions:
+                            st.markdown(f'<div class="suggestion">{suggestion}</div>', unsafe_allow_html=True)
+                    except Exception as e:
+                        st.error(f"Error during classification: {e}")
+
+        # Release the webcam
+        cap.release()
 
     # Enhanced sidebar
     st.sidebar.markdown("## Waste Classification App")
@@ -223,4 +238,5 @@ def show_classification_page():
 
 # Main application
 if __name__ == "__main__":
+    st.title("Waste Classification App")
     show_classification_page()
