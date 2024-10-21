@@ -15,7 +15,7 @@ class CustomDepthwiseConv2D(DepthwiseConv2D):
 
 # Function to load the model
 def load_model_func():
-    model_path = 'keras_model.h5'
+    model_path = 'waste_classification.h5'
     if not os.path.isfile(model_path):
         raise FileNotFoundError(f"Model file not found: {model_path}")
     model = load_model(model_path, custom_objects={'DepthwiseConv2D': CustomDepthwiseConv2D})
@@ -101,7 +101,7 @@ def show_classification_page():
         .title {
             text-align: center;
             font-size: 3.5em;
-            color: #2E8B57; /* Green shade for eco-friendliness */
+            color: #00A86B; /* Green shade for eco-friendliness */
             font-weight: 700;
             padding: 20px;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
@@ -150,11 +150,11 @@ def show_classification_page():
     )
 
     # Display enhanced title
-    st.markdown('<div class="title">Eco-Sort 🌱</div>', unsafe_allow_html=True)
-    st.write("### Capture an image using your webcam or upload an image file to classify the type of waste")
+    st.markdown('<div class="title">EcoSort 🌱</div>', unsafe_allow_html=True)
+    st.write("### Capture or upload an image to classify waste type")
 
     # Webcam option
-    option = st.selectbox("Choose an option:", ("Upload Image", "Use Webcam"))
+    option = st.radio("Choose an option:", ("Upload Image", "Use Webcam"))
 
     if option == "Use Webcam":
         st.markdown("<div class='camera-section'>", unsafe_allow_html=True)
@@ -168,7 +168,7 @@ def show_classification_page():
                 predicted_label = classify_image(model, labels, image_data)
                 st.write(f"### Result: **{predicted_label}**")
                 suggestions = get_suggestions(predicted_label)
-                st.subheader("♻️ Recycling Suggestions:")
+                st.subheader("Recycling Suggestions:")
                 for suggestion in suggestions:
                     st.markdown(f'<div class="suggestion">{suggestion}</div>', unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
@@ -193,25 +193,13 @@ def show_classification_page():
                         
                         # Show recycling suggestions
                         suggestions = get_suggestions(predicted_label)
-                        st.subheader("♻️ Recycling Suggestions:")
+                        st.subheader("Recycling Suggestions:")
                         for suggestion in suggestions:
                             st.markdown(f'<div class="suggestion">{suggestion}</div>', unsafe_allow_html=True)
                     except Exception as e:
                         st.error(f"Error during classification: {e}")
             st.markdown('</div>', unsafe_allow_html=True)
 
-    # Enhanced sidebar
-    st.sidebar.markdown("## Waste Classification App")
-    st.sidebar.write("This application helps you classify types of waste by analyzing images. Learn how you can better manage and recycle waste effectively.")
-
-    # Footer with enhanced links
-    st.markdown(
-        "<div class='footer-links' style='text-align: center; padding-top: 30px;'>"
-        "<a href='#' style='font-weight:bold;'>Learn More about Waste Management</a> | "
-        "<a href='#' style='font-weight:bold;'>Recycling Tips</a>"
-        "</div>",
-        unsafe_allow_html=True
-    )
 
 # Main application
 if __name__ == "__main__":
