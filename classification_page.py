@@ -15,7 +15,7 @@ class CustomDepthwiseConv2D(DepthwiseConv2D):
 
 # Function to load the model
 def load_model_func():
-    model_path = 'waste_classification.h5'
+    model_path = 'keras_model.h5'
     if not os.path.isfile(model_path):
         raise FileNotFoundError(f"Model file not found: {model_path}")
     model = load_model(model_path, custom_objects={'DepthwiseConv2D': CustomDepthwiseConv2D})
