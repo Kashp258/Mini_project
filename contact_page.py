@@ -9,17 +9,17 @@ def show_contact_page():
 
     - **Vidhi Dhakate**: 
       - Email: dhakatevs@rknec.edu
-      - Mobile: +91 9823299231
+      - Mobile: +91 982329xxxx
 
       <br>
 
     - **Tejas Mahakalkar**: 
       - Email: mahakalkarth@rknec.edu
-      - Mobile: +91 7559137557
+      - Mobile: +91 755913xxxx
 
       <br>
 
     - **Kashish Pawar**: 
       - Email: pawarkn@rknec.edu
-      - Mobile: +91 7049226830
+      - Mobile: +91 704922xxxx
     """, unsafe_allow_html=True)
