@@ -35,7 +35,6 @@ EcoSort is an AI-powered waste classification system that helps users efficientl
 - Expanded waste categories (e-waste, textiles, hazardous waste)  
 
 ## Contributors  
-- Vidhi Dhakate  
 - Kashish Pawar  
 - Tejas Mahakalkar  
 
